@@ -221,10 +221,26 @@
   text-align: center;
 }
 
-/* Emoji Display */
+/* Emoji Display with Logos */
+.emoji-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.side-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
 .emoji-display {
   text-align: center;
-  margin-bottom: 28px;
   min-height: 110px;
   display: flex;
   flex-direction: column;
@@ -473,5 +489,18 @@
   .rating-card,
   .success-card {
     padding: 28px 20px;
+  }
+
+  .emoji-row {
+    gap: 12px;
+  }
+
+  .side-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .emoji-face {
+    font-size: 56px;
   }
 }
