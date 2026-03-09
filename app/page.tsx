@@ -86,35 +86,35 @@ export default function FeedbackPage() {
         {!submitted && (
           <div id="form-wrap">
             <div className="rating-card">
-              <div className="emoji-row">
-                <img 
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DRJPRH-LOGO-whs9I1MJKYLMKZCI1yMREuDUe26vWX.jpg" 
-                  alt="Dr. Jorge P. Royeca City Hospital Logo" 
-                  className="side-logo"
-                />
-                <div className="emoji-display">
-                  <span
-                    className="emoji-face"
-                    style={{
-                      filter: currentRating ? `drop-shadow(0 0 24px ${currentRating.color}99)` : undefined,
-                      transform: emojiScale ? "scale(1.15)" : "scale(1)",
-                    }}
-                  >
-                    {currentRating?.emoji || "😶"}
-                  </span>
-                  <div
-                    className="emoji-label"
-                    style={{ color: currentRating?.color || "white" }}
-                  >
-                    {currentRating ? `${selectedRating} — ${currentRating.label}` : "Pick a number"}
-                  </div>
-                  <div className="emoji-sublabel">1 = Extremely Sad · 10 = Happiest</div>
-                </div>
+              <div className="corner-logos">
                 <img 
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LGU%20LOGO-SLbvY5LgCOBmUgP1StiZm35XGvZbO4.png" 
                   alt="City of General Santos Seal" 
-                  className="side-logo"
+                  className="corner-logo corner-logo-left"
                 />
+                <img 
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DRJPRH-LOGO-whs9I1MJKYLMKZCI1yMREuDUe26vWX.jpg" 
+                  alt="Dr. Jorge P. Royeca City Hospital Logo" 
+                  className="corner-logo corner-logo-right"
+                />
+              </div>
+              <div className="emoji-display">
+                <span
+                  className="emoji-face"
+                  style={{
+                    filter: currentRating ? `drop-shadow(0 0 24px ${currentRating.color}99)` : undefined,
+                    transform: emojiScale ? "scale(1.15)" : "scale(1)",
+                  }}
+                >
+                  {currentRating?.emoji || "😶"}
+                </span>
+                <div
+                  className="emoji-label"
+                  style={{ color: currentRating?.color || "white" }}
+                >
+                  {currentRating ? `${selectedRating} — ${currentRating.label}` : "Pick a number"}
+                </div>
+                <div className="emoji-sublabel">1 = Extremely Sad · 10 = Happiest</div>
               </div>
 
               <div className="progress-track">
