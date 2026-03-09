@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DRJPRH — Share Your Feedback</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #12121a;
+      --surface2: #1a1a26;
+      --border: rgba(255, 255, 255, 0.07);
+      --text: #f0f0f8;
+      --muted: #6b6b88;
+      --accent: #FF6500;
+      --accent2: #059212;
+      --gold: #FFC300;
+      --green: #9BEC00;
+
+      --r1: #740A03;
+      --r2: #C3110C;
+      --r3: #FF6500;
+      --r4: #FA8112;
+      --r5: #FFC300;
+      --r6: #FFD400;
+      --r7: #F3FF90;
+      --r8: #9BEC00;
+      --r9: #06D001;
+      --r10: #059212;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+
+      .bg-logo {
+        position: fixed;
+        top: 80%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120vw;
+        height: 120vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.25;
+        /* 30% fade for masking effect */
+      }
+
+      .bg-logo img {
+        width: 60%;
+        max-width: none;
+        height: auto;
+        filter: blur(2px);
+        opacity: 0.6;
+        /* increase from 0.05 so it’s visible */
+      }
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 101, 0, 0.12) 0%, transparent 70%);
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+
+    .bg-glow::after {
+      content: '';
+      position: absolute;
+      bottom: -200px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(5, 146, 18, 0.10) 0%, transparent 70%);
+      animation: drift2 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift1 {
+      from {
+        transform: translate(0, 0);
+      }
+
+      to {
+        transform: translate(60px, 40px);
+      }
+    }
+
+    @keyframes drift2 {
+      from {
+        transform: translate(0, 0);
+      }
+
+      to {
+        transform: translate(-40px, -60px);
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      color: black;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* NAV — client only, no tabs */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgb(19, 103, 231);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      background: white;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo span {
+      -webkit-text-fill-color: black;
+    }
+
+    /* HERO */
+    .client-hero {
+      text-align: center;
+      padding: 64px 0 40px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: blue;
+      border: 1px solid blue;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      background: rgba(45, 116, 238, 0);
+    }
+
+    .client-hero h1 {
+      font-family: 'Syne', sans-serif;
+      color: black;
+      font-size: clamp(34px, 6vw, 60px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+    }
+
+    .client-hero h1 em {
+      font-style: normal;
+      background: #000;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .client-hero p {
+      color: black;
+      font-size: 17px;
+      font-weight: 300;
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* RATING CARD */
+    .rating-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      margin: 36px auto 60px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.4s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .rating-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--r1), var(--r5), var(--r10));
+    }
+
+    .rating-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    /* EMOJI */
+    .emoji-display {
+      text-align: center;
+      margin-bottom: 28px;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .emoji-face {
+      font-size: 72px;
+      line-height: 1;
+      display: block;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .emoji-label {
+      margin-top: 12px;
+      font-family: 'Syne', sans-serif;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      transition: color 0.3s ease;
+    }
+
+    .emoji-sublabel {
+      font-size: 12px;
+      color: white;
+      margin-top: 4px;
+    }
+
+    /* PROGRESS */
+    .progress-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 100px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, #740A03, #FF6500, #FFC300, #9BEC00, #059212);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* RATING BUTTONS */
+    .rating-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .rate-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface2);
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .rate-btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .rate-btn.selected {
+      transform: translateY(-6px) scale(1.12);
+      border-color: transparent;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .rate-btn[data-val="1"].selected {
+      background: #740A03;
+      box-shadow: 0 8px 24px rgba(116, 10, 3, 0.6);
+      color: #fff;
+    }
+
+    .rate-btn[data-val="2"].selected {
+      background: #C3110C;
+      box-shadow: 0 8px 24px rgba(195, 17, 12, 0.6);
+      color: #fff;
+    }
+
+    .rate-btn[data-val="3"].selected {
+      background: #FF6500;
+      box-shadow: 0 8px 24px rgba(255, 101, 0, 0.6);
+      color: #fff;
+    }
+
+    .rate-btn[data-val="4"].selected {
+      background: #FA8112;
+      box-shadow: 0 8px 24px rgba(250, 129, 18, 0.6);
+      color: #000;
+    }
+
+    .rate-btn[data-val="5"].selected {
+      background: #FFC300;
+      box-shadow: 0 8px 24px rgba(255, 195, 0, 0.6);
+      color: #000;
+    }
+
+    .rate-btn[data-val="6"].selected {
+      background: #FFD400;
+      box-shadow: 0 8px 24px rgba(255, 212, 0, 0.6);
+      color: #000;
+    }
+
+    .rate-btn[data-val="7"].selected {
+      background: #F3FF90;
+      box-shadow: 0 8px 24px rgba(243, 255, 144, 0.5);
+      color: #000;
+    }
+
+    .rate-btn[data-val="8"].selected {
+      background: #9BEC00;
+      box-shadow: 0 8px 24px rgba(155, 236, 0, 0.6);
+      color: #000;
+    }
+
+    .rate-btn[data-val="9"].selected {
+      background: #06D001;
+      box-shadow: 0 8px 24px rgba(6, 208, 1, 0.6);
+      color: #000;
+    }
+
+    .rate-btn[data-val="10"].selected {
+      background: #059212;
+      box-shadow: 0 8px 24px rgba(5, 146, 18, 0.6);
+      color: #fff;
+    }
+
+    .rate-btn[data-val="1"]:hover {
+      border-color: #740A03;
+      color: #740A03;
+    }
+
+    .rate-btn[data-val="2"]:hover {
+      border-color: #C3110C;
+      color: #C3110C;
+    }
+
+    .rate-btn[data-val="3"]:hover {
+      border-color: #FF6500;
+      color: #FF6500;
+    }
+
+    .rate-btn[data-val="4"]:hover {
+      border-color: #FA8112;
+      color: #FA8112;
+    }
+
+    .rate-btn[data-val="5"]:hover {
+      border-color: #FFC300;
+      color: #FFC300;
+    }
+
+    .rate-btn[data-val="6"]:hover {
+      border-color: #FFD400;
+      color: #FFD400;
+    }
+
+    .rate-btn[data-val="7"]:hover {
+      border-color: #F3FF90;
+      color: #F3FF90;
+    }
+
+    .rate-btn[data-val="8"]:hover {
+      border-color: #9BEC00;
+      color: #9BEC00;
+    }
+
+    .rate-btn[data-val="9"]:hover {
+      border-color: #06D001;
+      color: #06D001;
+    }
+
+    .rate-btn[data-val="10"]:hover {
+      border-color: #059212;
+      color: #059212;
+    }
+
+    .scale-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 4px;
+      margin-bottom: 24px;
+    }
+
+    .scale-bar span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* SUBMIT */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #fa8112);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 30px rgba(255, 101, 0, 0.25);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(255, 101, 0, 0.45);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* SUCCESS */
+    .success-wrap {
+      display: none;
+    }
+
+    .success-wrap.visible {
+      display: block;
+      animation: fadeUp 0.4s ease;
+    }
+
+    .success-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 56px 40px;
+      margin: 36px auto 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .success-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--r8), var(--r9), var(--r10));
+    }
+
+    .success-icon {
+      font-size: 80px;
+      display: block;
+      margin-bottom: 20px;
+      animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-card h3 {
+      font-family: 'Syne', sans-serif;
+      color: white;
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .success-card p {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 360px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    .try-again {
+      padding: 12px 32px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .try-again:hover {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    @media (max-width: 600px) {
+      .rate-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 15px;
+      }
+
+      .rating-card,
+      .success-card {
+        padding: 28px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-glow"></div>
+  <div class="bg-logo">
+    <img src="images/logo/DRJPRH-LOGO.jpg" alt="DRJPRH Logo">
+  </div>
+
+  <nav>
+    <div class="logo">DRJPRH<span> FEEDBACK</span></div>
+  </nav>
+
+  <div class="container">
+    <div class="client-hero">
+      <div class="eyebrow">admin/employee</div>
+      <h1>How are<br>you <em>today?</em></h1>
+      <p>Your honest feedback helps us grow. Tell us what you feel today.</p>
+    </div>
+
+    <!-- FORM -->
+    <div id="form-wrap">
+      <div class="rating-card">
+
+        <div class="emoji-display">
+          <span class="emoji-face" id="emoji-face">😶</span>
+          <div class="emoji-label" id="emoji-label" style="color: white">Pick a number</div>
+          <div class="emoji-sublabel">1 = Extremely Sad &nbsp;·&nbsp; 10 = Happiest</div>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="rating-buttons" id="rating-buttons"></div>
+
+        <div class="scale-bar">
+          <span>😢 Extremely Sad</span>
+          <span>😁 Happiest Ever 🎉</span>
+        </div>
+
+
+
+        <button class="submit-btn" id="submit-btn" onclick="submitRating()" disabled>
+          Select a Rating to Continue
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-wrap" id="success-wrap">
+      <div class="success-card">
+        <span class="success-icon" id="success-icon">🎉</span>
+        <h3 id="success-title">Thank you!</h3>
+        <p id="success-msg">Your feedback has been submitted.</p>
+        <button class="try-again" onclick="resetForm()">Submit Another Rating</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ratingData = [
+      { val: 1, emoji: '😭', label: 'Extremely Sad', color: '#740A03' },
+      { val: 2, emoji: '😢', label: 'Very sad', color: '#C3110C' },
+      { val: 3, emoji: '😞', label: 'Sad', color: '#FF6500' },
+      { val: 4, emoji: '😕', label: 'Slightly Sad', color: '#FA8112' },
+      { val: 5, emoji: '😐', label: 'Neutral', color: '#FFC300' },
+      { val: 6, emoji: '🙂', label: 'A little Happy', color: '#FFD400' },
+      { val: 7, emoji: '😊', label: 'Happy', color: '#F3FF90' },
+      { val: 8, emoji: '😁', label: 'Very Happy', color: '#9BEC00' },
+      { val: 9, emoji: '🤩', label: 'Extremely Happy', color: '#06D001' },
+      { val: 10, emoji: '🥳', label: 'Happiest Ever', color: '#059212' },
+    ];
+
+    let selectedRating = null;
+
+    function buildRatingButtons() {
+      const wrap = document.getElementById('rating-buttons');
+      ratingData.forEach(r => {
+        const btn = document.createElement('button');
+        btn.className = 'rate-btn';
+        btn.dataset.val = r.val;
+        btn.textContent = r.val;
+        btn.title = r.label;
+        btn.onclick = () => selectRating(r.val);
+        wrap.appendChild(btn);
+      });
+    }
+
+    function selectRating(val) {
+      selectedRating = val;
+      const r = ratingData[val - 1];
+      document.querySelectorAll('.rate-btn').forEach(b => b.classList.toggle('selected', parseInt(b.dataset.val) === val));
+      const face = document.getElementById('emoji-face');
+      face.textContent = r.emoji;
+      face.style.filter = `drop-shadow(0 0 24px ${r.color}99)`;
+      face.style.transform = 'scale(1.15)';
+      setTimeout(() => face.style.transform = 'scale(1)', 300);
+      document.getElementById('emoji-label').textContent = `${val} — ${r.label}`;
+      document.getElementById('emoji-label').style.color = r.color;
+      document.getElementById('progress-fill').style.width = (val / 10 * 100) + '%';
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = false;
+      btn.textContent = `Submit Rating: ${val}/10`;
+      btn.style.background = `linear-gradient(135deg, ${r.color}, ${r.color}bb)`;
+      btn.style.color = (val <= 3 || val === 10) ? '#fff' : '#000';
+    }
+
+    function submitRating() {
+      if (!selectedRating) return;
+      const r = ratingData[selectedRating - 1];
+      document.getElementById('form-wrap').style.display = 'none';
+      document.getElementById('success-wrap').classList.add('visible');
+      document.getElementById('success-icon').textContent = r.emoji;
+      document.getElementById('success-title').textContent =
+        selectedRating >= 8 ? 'Awesome! Thank you! 🎉' :
+          selectedRating >= 5 ? 'Thanks for your feedback!' : 'We appreciate your honesty.';
+      document.getElementById('success-msg').textContent =
+        selectedRating >= 8 ? "We're thrilled you had a great experience!" :
+          selectedRating >= 5 ? "We'll use your feedback to keep improving." :
+            "We're sorry to hear that. We'll work hard to do better.";
+    }
+
+    function resetForm() {
+      selectedRating = null;
+      document.getElementById('form-wrap').style.display = 'block';
+      document.getElementById('success-wrap').classList.remove('visible');
+      document.getElementById('emoji-face').textContent = '😶';
+      document.getElementById('emoji-face').style.filter = '';
+      document.getElementById('emoji-label').textContent = 'Pick a number';
+      document.getElementById('emoji-label').style.color = 'var(--muted)';
+      document.getElementById('progress-fill').style.width = '0%';
+      document.getElementById('client-comment').value = '';
+      document.querySelectorAll('.rate-btn').forEach(b => b.classList.remove('selected'));
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Select a Rating to Continue';
+      btn.style.background = '';
+      btn.style.color = '';
+    }
+
+    buildRatingButtons();
+  </script>
+</body>
+
+</html>
