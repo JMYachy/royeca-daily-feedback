@@ -1,4 +1,13 @@
 // DRJPRH Feedback Page Script
+const supabaseUrl = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// Read URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const branchName = urlParams.get("branch") || "Unknown Branch";
+const role = urlParams.get("role") || null;
 
 // Rating data
 const ratingData = [
@@ -80,10 +89,39 @@ function handleSelectRating(val) {
 }
 
 // Handle form submission
-function handleSubmit() {
+async function handleSubmit() {
   if (!selectedRating) return;
 
   const rating = ratingData[selectedRating - 1];
+
+  // Disable button while submitting
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  // Get current date and time
+  const now = new Date();
+  const date = now.toLocaleDateString("en-CA"); // YYYY-MM-DD
+  const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" }); // HH:MM:SS
+
+  // Insert into Supabase
+  const { error } = await supabase.from("table_reports").insert([
+    {
+      branch_name: branchName,
+      role: role,
+      rating: selectedRating,
+      date: date,
+      time: time,
+    },
+  ]);
+
+  if (error) {
+    console.error("Supabase insert error:", error);
+    submitBtn.disabled = false;
+    submitBtn.textContent = `Submit Rating: ${selectedRating}/10`;
+    alert("Something went wrong. Please try again.");
+    return;
+  }
+
   let title, message;
 
   if (selectedRating >= 8) {
