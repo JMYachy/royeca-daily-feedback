@@ -4,7 +4,10 @@
 const SUPABASE_URL = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
 // =============================
 // Rating Data
@@ -85,9 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
     emojiFace.textContent = rating.emoji;
     emojiFace.style.filter = `drop-shadow(0 0 24px ${rating.color}99)`;
 
-    emojiFace.classList.add("scale");
-    setTimeout(() => emojiFace.classList.remove("scale"), 300);
-
     emojiLabel.textContent = `${val} — ${rating.label}`;
     emojiLabel.style.color = rating.color;
 
@@ -113,58 +113,62 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtn.disabled = true;
     submitBtn.textContent = "Submitting...";
 
-    const rating = ratingData[selectedRating - 1];
+    try {
 
-    const { data, error } = await supabaseClient
-      .from("table_reports")
-      .insert([
-        {
-          branch_name: "Admin",
-          role: "Admin/Clients",
-          rating: selectedRating,
-          created_at: new Date().toISOString()
-        }
-      ]);
+      const { data, error } = await supabaseClient
+        .from("table_reports")
+        .insert([
+          {
+            branch_name: "Admin",
+            role: "Admin/Clients",
+            rating: selectedRating,
+            created_at: new Date().toLocaleString()
+          }
+        ])
+        .select();
 
-    if (error) {
+      if (error) throw error;
 
-      console.error("Supabase error:", error);
+      const rating = ratingData[selectedRating - 1];
+
+      let title, message;
+
+      if (selectedRating >= 8) {
+
+        title = "Awesome! Thank you!";
+        message = "We're thrilled you had a great experience!";
+
+      }
+      else if (selectedRating >= 5) {
+
+        title = "Thanks for your feedback!";
+        message = "We'll use your feedback to keep improving.";
+
+      }
+      else {
+
+        title = "We appreciate your honesty.";
+        message = "We're sorry to hear that. We'll work hard to do better.";
+
+      }
+
+      successIcon.textContent = rating.emoji;
+      successTitle.textContent = title;
+      successMessage.textContent = message;
+
+      formWrap.classList.add("hidden");
+      successWrap.classList.add("visible");
+
+    } catch (err) {
+
+      console.error("Supabase error:", err);
+
       alert("Failed to save feedback.");
 
       submitBtn.disabled = false;
       submitBtn.textContent = "Submit Again";
 
-      return;
-
     }
-
-    let title, message;
-
-    if (selectedRating >= 8) {
-
-      title = "Awesome! Thank you!";
-      message = "We're thrilled you had a great experience!";
-
-    }
-    else if (selectedRating >= 5) {
-
-      title = "Thanks for your feedback!";
-      message = "We'll use your feedback to keep improving.";
-
-    }
-    else {
-
-      title = "We appreciate your honesty.";
-      message = "We're sorry to hear that. We'll work hard to do better.";
-
-    }
-
-    successIcon.textContent = rating.emoji;
-    successTitle.textContent = title;
-    successMessage.textContent = message;
-
-    formWrap.classList.add("hidden");
-    successWrap.classList.add("visible");
 
   }
 
