@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Save to Supabase
     const { error } = await supabaseClient
-      .from("feedback")
+      .from("table_reports")
       .insert([
         {
           rating: selectedRating,
