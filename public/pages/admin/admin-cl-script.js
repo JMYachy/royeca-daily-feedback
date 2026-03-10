@@ -147,8 +147,8 @@ async function handleSubmit() {
     successTitle.textContent = title;
     successMessage.textContent = message;
 
-    formWrap.classList.add("hidden");
-    successWrap.classList.add("visible");
+    formWrap.classList.add("show");
+    successWrap.classList.add("show");
 
   } catch (err) {
     console.error("Unexpected error:", err);
