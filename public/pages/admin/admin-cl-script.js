@@ -21,6 +21,7 @@ const ratingData = [
 
 // State
 let selectedRating = null;
+let isSubmitting = false;
 
 // DOM Elements
 const formWrap = document.getElementById("form-wrap");
@@ -43,7 +44,11 @@ function initRatingButtons() {
     btn.dataset.val = r.val;
     btn.title = r.label;
     btn.textContent = r.val;
-    btn.addEventListener("click", () => handleSelectRating(r.val));
+    btn.addEventListener("click", () => {
+      // Prevent clicks while submitting
+      if (isSubmitting) return;
+      handleSelectRating(r.val);
+    });
     ratingButtons.appendChild(btn);
   });
 }
@@ -86,59 +91,80 @@ function handleSelectRating(val) {
 
 // Handle form submission
 async function handleSubmit() {
-  if (!selectedRating) return;
+  if (!selectedRating || isSubmitting) return;
+
+  // Set loading state — keeps buttons visible, just disables interaction
+  isSubmitting = true;
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting…";
 
   const now = new Date();
-
   const date = now.toLocaleDateString();
   const time = now.toLocaleTimeString();
 
-  const { data, error } = await supabase
-    .from("table_reports")
-    .insert([
-      {
-        branch_name: "DRJPRH",
-        role: "admin/employee",
-        rating: selectedRating,
-        date: date,
-        time: time
-      }
-    ]);
+  try {
+    const { error } = await supabase
+      .from("table_reports")
+      .insert([
+        {
+          branch_name: "DRJPRH",
+          role: "admin/employee",
+          rating: selectedRating,
+          date: date,
+          time: time,
+        },
+      ]);
 
-  if (error) {
-    console.error("Insert error:", error);
-    alert("Failed to submit rating");
-    return;
+    if (error) {
+      console.error("Insert error:", error);
+      // Restore UI so user can try again — rating selection stays intact
+      isSubmitting = false;
+      const rating = ratingData[selectedRating - 1];
+      submitBtn.disabled = false;
+      submitBtn.textContent = `Submit Rating: ${selectedRating}/10`;
+      submitBtn.style.background = `linear-gradient(135deg, ${rating.color}, ${rating.color}bb)`;
+      submitBtn.style.color = selectedRating <= 3 || selectedRating === 10 ? "#fff" : "#000";
+      alert("Failed to submit. Please try again.");
+      return;
+    }
+
+    // Success — show success screen
+    const rating = ratingData[selectedRating - 1];
+    let title, message;
+
+    if (selectedRating >= 8) {
+      title = "Awesome! Thank you!";
+      message = "We're thrilled you had a great experience!";
+    } else if (selectedRating >= 5) {
+      title = "Thanks for your feedback!";
+      message = "We'll use your feedback to keep improving.";
+    } else {
+      title = "We appreciate your honesty.";
+      message = "We're sorry to hear that. We'll work hard to do better.";
+    }
+
+    successIcon.textContent = rating.emoji;
+    successTitle.textContent = title;
+    successMessage.textContent = message;
+
+    formWrap.classList.add("hidden");
+    successWrap.classList.add("visible");
+
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    isSubmitting = false;
+    const rating = ratingData[selectedRating - 1];
+    submitBtn.disabled = false;
+    submitBtn.textContent = `Submit Rating: ${selectedRating}/10`;
+    submitBtn.style.background = `linear-gradient(135deg, ${rating.color}, ${rating.color}bb)`;
+    submitBtn.style.color = selectedRating <= 3 || selectedRating === 10 ? "#fff" : "#000";
+    alert("Something went wrong. Please try again.");
   }
-
-  console.log("Saved:", data);
-
-  // existing success display
-  const rating = ratingData[selectedRating - 1];
-  let title, message;
-
-  if (selectedRating >= 8) {
-    title = "Awesome! Thank you!";
-    message = "We're thrilled you had a great experience!";
-  } else if (selectedRating >= 5) {
-    title = "Thanks for your feedback!";
-    message = "We'll use your feedback to keep improving.";
-  } else {
-    title = "We appreciate your honesty.";
-    message = "We're sorry to hear that. We'll work hard to do better.";
-  }
-
-  successIcon.textContent = rating.emoji;
-  successTitle.textContent = title;
-  successMessage.textContent = message;
-
-  formWrap.classList.add("hidden");
-  successWrap.classList.add("visible");
 }
 
 // Handle reset
 function handleReset() {
-  window.location.href = "/index.html"
+  window.location.href = "/index.html";
 }
 
 // Event listeners
