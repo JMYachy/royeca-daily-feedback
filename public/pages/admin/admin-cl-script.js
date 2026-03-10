@@ -177,28 +177,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // =============================
   function handleReset() {
 
-    selectedRating = null;
-
-    emojiFace.textContent = "😶";
-    emojiFace.style.filter = "";
-
-    emojiLabel.textContent = "Pick a number";
-    emojiLabel.style.color = "white";
-
-    progressFill.style.width = "0%";
-
-    document.querySelectorAll(".rate-btn").forEach((btn) => {
-      btn.classList.remove("selected");
-    });
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Select a Rating to Continue";
-
-    submitBtn.style.background = "";
-    submitBtn.style.color = "";
-
-    successWrap.classList.remove("visible");
-    formWrap.classList.remove("hidden");
+    /* selectedRating = null;
+ 
+     emojiFace.textContent = "😶";
+     emojiFace.style.filter = "";
+ 
+     emojiLabel.textContent = "Pick a number";
+     emojiLabel.style.color = "white";
+ 
+     progressFill.style.width = "0%";
+ 
+     document.querySelectorAll(".rate-btn").forEach((btn) => {
+       btn.classList.remove("selected");
+     });
+ 
+     submitBtn.disabled = true;
+     submitBtn.textContent = "Select a Rating to Continue";
+ 
+     submitBtn.style.background = "";
+     submitBtn.style.color = "";
+ 
+     successWrap.classList.remove("visible");
+     formWrap.classList.remove("hidden"); */
 
     Window.location.href = "/index.html"
 
