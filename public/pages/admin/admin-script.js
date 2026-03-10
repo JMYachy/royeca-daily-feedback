@@ -138,31 +138,7 @@ async function handleSubmit() {
 
 // Handle reset
 function handleReset() {
-  selectedRating = null;
-
-  // Reset emoji display
-  emojiFace.textContent = "\u{1F636}"; // neutral face
-  emojiFace.style.filter = "";
-  emojiLabel.textContent = "Pick a number";
-  emojiLabel.style.color = "white";
-
-  // Reset progress
-  progressFill.style.width = "0%";
-
-  // Reset buttons
-  document.querySelectorAll(".rate-btn").forEach((btn) => {
-    btn.classList.remove("selected");
-  });
-
-  // Reset submit button
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Select a Rating to Continue";
-  submitBtn.style.background = "";
-  submitBtn.style.color = "";
-
-  // Hide success, show form
-  successWrap.classList.remove("visible");
-  formWrap.classList.remove("hidden");
+  window.location.href = "/index.html"
 }
 
 // Event listeners
