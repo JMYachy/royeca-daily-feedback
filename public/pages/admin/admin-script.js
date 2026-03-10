@@ -1,10 +1,10 @@
 // DRJPRH Feedback Page Script
-
+/*
 const supabaseUrl = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
 
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
+*/
 // Rating data
 const ratingData = [
   { val: 1, emoji: "\u{1F62D}", label: "Extremely Sad", color: "#740A03" },
