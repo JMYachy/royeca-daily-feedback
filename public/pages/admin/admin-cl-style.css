@@ -107,7 +107,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgb(19, 103, 231);
+  background: green;
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--fb-border);
   padding: 18px 24px;
@@ -143,8 +143,8 @@
   font-weight: 600;
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: blue;
-  border: 1px solid blue;
+  color: green;
+  border: 1px solid green;
   padding: 6px 16px;
   border-radius: 100px;
   margin-bottom: 28px;
