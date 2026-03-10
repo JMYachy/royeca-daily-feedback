@@ -85,9 +85,35 @@ function handleSelectRating(val) {
 }
 
 // Handle form submission
-function handleSubmit() {
+async function handleSubmit() {
   if (!selectedRating) return;
 
+  const now = new Date();
+
+  const date = now.toLocaleDateString();
+  const time = now.toLocaleTimeString();
+
+  const { data, error } = await supabase
+    .from("table_reports")
+    .insert([
+      {
+        branch_name: "DRJPRH",
+        role: "admin/employee",
+        rating: selectedRating,
+        date: date,
+        time: time
+      }
+    ]);
+
+  if (error) {
+    console.error("Insert error:", error);
+    alert("Failed to submit rating");
+    return;
+  }
+
+  console.log("Saved:", data);
+
+  // existing success display
   const rating = ratingData[selectedRating - 1];
   let title, message;
 
@@ -102,43 +128,17 @@ function handleSubmit() {
     message = "We're sorry to hear that. We'll work hard to do better.";
   }
 
-  // Update success card content
   successIcon.textContent = rating.emoji;
   successTitle.textContent = title;
   successMessage.textContent = message;
 
-  // Show success, hide form
   formWrap.classList.add("hidden");
   successWrap.classList.add("visible");
 }
 
 // Handle reset
 function handleReset() {
-  selectedRating = null;
-
-  // Reset emoji display
-  emojiFace.textContent = "\u{1F636}"; // neutral face
-  emojiFace.style.filter = "";
-  emojiLabel.textContent = "Pick a number";
-  emojiLabel.style.color = "white";
-
-  // Reset progress
-  progressFill.style.width = "0%";
-
-  // Reset buttons
-  document.querySelectorAll(".rate-btn").forEach((btn) => {
-    btn.classList.remove("selected");
-  });
-
-  // Reset submit button
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Select a Rating to Continue";
-  submitBtn.style.background = "";
-  submitBtn.style.color = "";
-
-  // Hide success, show form
-  successWrap.classList.remove("visible");
-  formWrap.classList.remove("hidden");
+  window.location.href = "/index.html"
 }
 
 // Event listeners
