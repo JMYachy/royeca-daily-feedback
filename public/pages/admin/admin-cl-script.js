@@ -26,18 +26,9 @@ const ratingData = [
 // State
 let selectedRating = null;
 
-// DOM Elements
-const formWrap = document.getElementById("form-wrap");
-const successWrap = document.getElementById("success-wrap");
-const emojiFace = document.getElementById("emoji-face");
-const emojiLabel = document.getElementById("emoji-label");
-const progressFill = document.getElementById("progress-fill");
-const ratingButtons = document.getElementById("rating-buttons");
-const submitBtn = document.getElementById("submit-btn");
-const successIcon = document.getElementById("success-icon");
-const successTitle = document.getElementById("success-title");
-const successMessage = document.getElementById("success-message");
-const tryAgainBtn = document.getElementById("try-again");
+// DOM Elements — declared here, assigned after DOM is ready
+let formWrap, successWrap, emojiFace, emojiLabel, progressFill,
+  ratingButtons, submitBtn, successIcon, successTitle, successMessage, tryAgainBtn;
 
 // Initialize rating buttons
 function initRatingButtons() {
@@ -54,12 +45,10 @@ function initRatingButtons() {
 
 // Handle rating selection
 function handleSelectRating(val) {
-  // Remove selected class from all buttons
   document.querySelectorAll(".rate-btn").forEach((btn) => {
     btn.classList.remove("selected");
   });
 
-  // Add selected class to clicked button
   const selectedBtn = document.querySelector(`.rate-btn[data-val="${val}"]`);
   if (selectedBtn) {
     selectedBtn.classList.add("selected");
@@ -68,20 +57,16 @@ function handleSelectRating(val) {
   selectedRating = val;
   const rating = ratingData[val - 1];
 
-  // Update emoji display
   emojiFace.textContent = rating.emoji;
   emojiFace.style.filter = `drop-shadow(0 0 24px ${rating.color}99)`;
   emojiFace.classList.add("scale");
   setTimeout(() => emojiFace.classList.remove("scale"), 300);
 
-  // Update label
   emojiLabel.textContent = `${val} — ${rating.label}`;
   emojiLabel.style.color = rating.color;
 
-  // Update progress bar
   progressFill.style.width = `${(val / 10) * 100}%`;
 
-  // Update submit button
   submitBtn.disabled = false;
   submitBtn.textContent = `Submit Rating: ${val}/10`;
   submitBtn.style.background = `linear-gradient(135deg, ${rating.color}, ${rating.color}bb)`;
@@ -94,16 +79,13 @@ async function handleSubmit() {
 
   const rating = ratingData[selectedRating - 1];
 
-  // Disable button while submitting
   submitBtn.disabled = true;
   submitBtn.textContent = "Submitting...";
 
-  // Get current date and time
   const now = new Date();
   const date = now.toLocaleDateString("en-CA"); // YYYY-MM-DD
   const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" }); // HH:MM:SS
 
-  // Insert into Supabase
   const { error } = await supabase.from("table_reports").insert([
     {
       branch_name: branchName,
@@ -135,12 +117,10 @@ async function handleSubmit() {
     message = "We're sorry to hear that. We'll work hard to do better.";
   }
 
-  // Update success card content
   successIcon.textContent = rating.emoji;
   successTitle.textContent = title;
   successMessage.textContent = message;
 
-  // Show success, hide form
   formWrap.classList.add("hidden");
   successWrap.classList.add("visible");
 }
@@ -149,34 +129,42 @@ async function handleSubmit() {
 function handleReset() {
   selectedRating = null;
 
-  // Reset emoji display
-  emojiFace.textContent = "\u{1F636}"; // neutral face
+  emojiFace.textContent = "\u{1F636}";
   emojiFace.style.filter = "";
   emojiLabel.textContent = "Pick a number";
   emojiLabel.style.color = "white";
 
-  // Reset progress
   progressFill.style.width = "0%";
 
-  // Reset buttons
   document.querySelectorAll(".rate-btn").forEach((btn) => {
     btn.classList.remove("selected");
   });
 
-  // Reset submit button
   submitBtn.disabled = true;
   submitBtn.textContent = "Select a Rating to Continue";
   submitBtn.style.background = "";
   submitBtn.style.color = "";
 
-  // Hide success, show form
   successWrap.classList.remove("visible");
   formWrap.classList.remove("hidden");
 }
 
-// Event listeners
-submitBtn.addEventListener("click", handleSubmit);
-tryAgainBtn.addEventListener("click", handleReset);
+// Initialize — assign DOM elements and wire up events only after DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  formWrap = document.getElementById("form-wrap");
+  successWrap = document.getElementById("success-wrap");
+  emojiFace = document.getElementById("emoji-face");
+  emojiLabel = document.getElementById("emoji-label");
+  progressFill = document.getElementById("progress-fill");
+  ratingButtons = document.getElementById("rating-buttons");
+  submitBtn = document.getElementById("submit-btn");
+  successIcon = document.getElementById("success-icon");
+  successTitle = document.getElementById("success-title");
+  successMessage = document.getElementById("success-message");
+  tryAgainBtn = document.getElementById("try-again");
 
-// Initialize
-document.addEventListener("DOMContentLoaded", initRatingButtons);
+  submitBtn.addEventListener("click", handleSubmit);
+  tryAgainBtn.addEventListener("click", handleReset);
+
+  initRatingButtons();
+});
