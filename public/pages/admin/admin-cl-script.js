@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
      successWrap.classList.remove("visible");
      formWrap.classList.remove("hidden"); */
 
-    Window.location.href = "/index.html"
+    Window.location.href = "index.html"
 
   }
 
