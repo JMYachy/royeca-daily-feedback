@@ -1,30 +1,25 @@
 // =============================
 // SUPABASE CONNECTION
-
-const { time } = require("console");
-const { date } = require("zod");
-
 // =============================
 const SUPABASE_URL = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
 
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // =============================
 // Rating Data
 // =============================
 const ratingData = [
-  { val: 1, emoji: "\u{1F62D}", label: "Extremely Sad", color: "#740A03" },
-  { val: 2, emoji: "\u{1F622}", label: "Very sad", color: "#C3110C" },
-  { val: 3, emoji: "\u{1F61E}", label: "Sad", color: "#FF6500" },
-  { val: 4, emoji: "\u{1F615}", label: "Slightly Sad", color: "#FA8112" },
-  { val: 5, emoji: "\u{1F610}", label: "Neutral", color: "#FFC300" },
-  { val: 6, emoji: "\u{1F642}", label: "A little Happy", color: "#FFD400" },
-  { val: 7, emoji: "\u{1F60A}", label: "Happy", color: "#F3FF90" },
-  { val: 8, emoji: "\u{1F601}", label: "Very Happy", color: "#9BEC00" },
-  { val: 9, emoji: "\u{1F929}", label: "Extremely Happy", color: "#06D001" },
-  { val: 10, emoji: "\u{1F973}", label: "Happiest Ever", color: "#059212" },
+  { val: 1, emoji: "😭", label: "Extremely Sad", color: "#740A03" },
+  { val: 2, emoji: "😢", label: "Very sad", color: "#C3110C" },
+  { val: 3, emoji: "😞", label: "Sad", color: "#FF6500" },
+  { val: 4, emoji: "😕", label: "Slightly Sad", color: "#FA8112" },
+  { val: 5, emoji: "😐", label: "Neutral", color: "#FFC300" },
+  { val: 6, emoji: "🙂", label: "A little Happy", color: "#FFD400" },
+  { val: 7, emoji: "😊", label: "Happy", color: "#F3FF90" },
+  { val: 8, emoji: "😁", label: "Very Happy", color: "#9BEC00" },
+  { val: 9, emoji: "🤩", label: "Extremely Happy", color: "#06D001" },
+  { val: 10, emoji: "🥳", label: "Happiest Ever", color: "#059212" },
 ];
 
 // =============================
@@ -32,14 +27,8 @@ const ratingData = [
 // =============================
 document.addEventListener("DOMContentLoaded", () => {
 
-  // =============================
-  // STATE
-  // =============================
   let selectedRating = null;
 
-  // =============================
-  // DOM ELEMENTS
-  // =============================
   const formWrap = document.getElementById("form-wrap");
   const successWrap = document.getElementById("success-wrap");
   const emojiFace = document.getElementById("emoji-face");
@@ -93,29 +82,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const rating = ratingData[val - 1];
 
-    // Emoji update
     emojiFace.textContent = rating.emoji;
     emojiFace.style.filter = `drop-shadow(0 0 24px ${rating.color}99)`;
 
     emojiFace.classList.add("scale");
     setTimeout(() => emojiFace.classList.remove("scale"), 300);
 
-    // Label update
     emojiLabel.textContent = `${val} — ${rating.label}`;
     emojiLabel.style.color = rating.color;
 
-    // Progress bar
     progressFill.style.width = `${(val / 10) * 100}%`;
 
-    // Enable submit
     submitBtn.disabled = false;
     submitBtn.textContent = `Submit Rating: ${val}/10`;
 
     submitBtn.style.background =
       `linear-gradient(135deg, ${rating.color}, ${rating.color}bb)`;
 
-    submitBtn.style.color =
-      val <= 4 ? "#fff" : "#000";
+    submitBtn.style.color = val <= 4 ? "#fff" : "#000";
 
   }
 
@@ -131,26 +115,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const rating = ratingData[selectedRating - 1];
 
-    // Save to Supabase
-    const { error } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from("table_reports")
       .insert([
         {
           branch_name: "Admin",
           role: "Admin/Clients",
-
           rating: selectedRating,
           created_at: new Date().toISOString()
-          //label: rating.label,
-          //created_at: new Date().toISOString()
         }
       ]);
 
     if (error) {
+
       console.error("Supabase error:", error);
       alert("Failed to save feedback.");
+
       submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Again";
+
       return;
+
     }
 
     let title, message;
@@ -161,14 +146,12 @@ document.addEventListener("DOMContentLoaded", () => {
       message = "We're thrilled you had a great experience!";
 
     }
-
     else if (selectedRating >= 5) {
 
       title = "Thanks for your feedback!";
       message = "We'll use your feedback to keep improving.";
 
     }
-
     else {
 
       title = "We appreciate your honesty.";
@@ -192,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     selectedRating = null;
 
-    emojiFace.textContent = "\u{1F636}";
+    emojiFace.textContent = "😶";
     emojiFace.style.filter = "";
 
     emojiLabel.textContent = "Pick a number";
@@ -216,12 +199,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =============================
-  // EVENT LISTENERS
+  // EVENTS
   // =============================
   submitBtn.addEventListener("click", handleSubmit);
   tryAgainBtn.addEventListener("click", handleReset);
 
-  // Start page
   initRatingButtons();
 
 });
