@@ -1,5 +1,9 @@
 // =============================
 // SUPABASE CONNECTION
+
+const { time } = require("console");
+const { date } = require("zod");
+
 // =============================
 const SUPABASE_URL = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
@@ -132,9 +136,13 @@ document.addEventListener("DOMContentLoaded", () => {
       .from("table_reports")
       .insert([
         {
+          branch_name: "Admin",
+          role: "Admin/Clients",
+
           rating: selectedRating,
-          label: rating.label,
           created_at: new Date().toISOString()
+          //label: rating.label,
+          //created_at: new Date().toISOString()
         }
       ]);
 
