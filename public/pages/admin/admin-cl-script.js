@@ -1,4 +1,17 @@
+// =============================
+// SUPABASE CONNECTION
+// =============================
+const SUPABASE_URL = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+// =============================
 // DRJPRH Feedback Page Script
+// =============================
 
 // Rating data
 const ratingData = [
@@ -30,7 +43,9 @@ const successTitle = document.getElementById("success-title");
 const successMessage = document.getElementById("success-message");
 const tryAgainBtn = document.getElementById("try-again");
 
+// =============================
 // Initialize rating buttons
+// =============================
 function initRatingButtons() {
   ratingData.forEach((r) => {
     const btn = document.createElement("button");
@@ -38,30 +53,36 @@ function initRatingButtons() {
     btn.dataset.val = r.val;
     btn.title = r.label;
     btn.textContent = r.val;
+
     btn.addEventListener("click", () => handleSelectRating(r.val));
+
     ratingButtons.appendChild(btn);
   });
 }
 
+// =============================
 // Handle rating selection
+// =============================
 function handleSelectRating(val) {
-  // Remove selected class from all buttons
+
   document.querySelectorAll(".rate-btn").forEach((btn) => {
     btn.classList.remove("selected");
   });
 
-  // Add selected class to clicked button
   const selectedBtn = document.querySelector(`.rate-btn[data-val="${val}"]`);
+
   if (selectedBtn) {
     selectedBtn.classList.add("selected");
   }
 
   selectedRating = val;
+
   const rating = ratingData[val - 1];
 
-  // Update emoji display
+  // Update emoji
   emojiFace.textContent = rating.emoji;
   emojiFace.style.filter = `drop-shadow(0 0 24px ${rating.color}99)`;
+
   emojiFace.classList.add("scale");
   setTimeout(() => emojiFace.classList.remove("scale"), 300);
 
@@ -69,76 +90,103 @@ function handleSelectRating(val) {
   emojiLabel.textContent = `${val} — ${rating.label}`;
   emojiLabel.style.color = rating.color;
 
-  // Update progress bar
+  // Progress bar
   progressFill.style.width = `${(val / 10) * 100}%`;
 
-  // Update submit button
+  // Enable submit
   submitBtn.disabled = false;
   submitBtn.textContent = `Submit Rating: ${val}/10`;
-  submitBtn.style.background = `linear-gradient(135deg, ${rating.color}, ${rating.color}bb)`;
-  submitBtn.style.color = val <= 3 || val === 10 ? "#fff" : "#000";
+
+  submitBtn.style.background =
+    `linear-gradient(135deg, ${rating.color}, ${rating.color}bb)`;
+
+  submitBtn.style.color =
+    val <= 3 || val === 10 ? "#fff" : "#000";
 }
 
+// =============================
 // Handle form submission
-function handleSubmit() {
+// =============================
+async function handleSubmit() {
+
   if (!selectedRating) return;
 
   const rating = ratingData[selectedRating - 1];
+
+  // Save to Supabase
+  const { data, error } = await supabase
+    .from("feedback")
+    .insert([
+      {
+        rating: selectedRating,
+        label: rating.label
+      }
+    ]);
+
+  if (error) {
+    console.error("Supabase error:", error);
+    alert("Failed to save feedback.");
+    return;
+  }
+
   let title, message;
 
   if (selectedRating >= 8) {
     title = "Awesome! Thank you!";
     message = "We're thrilled you had a great experience!";
-  } else if (selectedRating >= 5) {
+  }
+
+  else if (selectedRating >= 5) {
     title = "Thanks for your feedback!";
     message = "We'll use your feedback to keep improving.";
-  } else {
+  }
+
+  else {
     title = "We appreciate your honesty.";
     message = "We're sorry to hear that. We'll work hard to do better.";
   }
 
-  // Update success card content
   successIcon.textContent = rating.emoji;
   successTitle.textContent = title;
   successMessage.textContent = message;
 
-  // Show success, hide form
   formWrap.classList.add("hidden");
   successWrap.classList.add("visible");
 }
 
-// Handle reset
+// =============================
+// Reset form
+// =============================
 function handleReset() {
+
   selectedRating = null;
 
-  // Reset emoji display
-  emojiFace.textContent = "\u{1F636}"; // neutral face
+  emojiFace.textContent = "\u{1F636}";
   emojiFace.style.filter = "";
+
   emojiLabel.textContent = "Pick a number";
   emojiLabel.style.color = "white";
 
-  // Reset progress
   progressFill.style.width = "0%";
 
-  // Reset buttons
   document.querySelectorAll(".rate-btn").forEach((btn) => {
     btn.classList.remove("selected");
   });
 
-  // Reset submit button
   submitBtn.disabled = true;
   submitBtn.textContent = "Select a Rating to Continue";
+
   submitBtn.style.background = "";
   submitBtn.style.color = "";
 
-  // Hide success, show form
   successWrap.classList.remove("visible");
   formWrap.classList.remove("hidden");
 }
 
-// Event listeners
+// =============================
+// Event Listeners
+// =============================
 submitBtn.addEventListener("click", handleSubmit);
 tryAgainBtn.addEventListener("click", handleReset);
 
-// Initialize
 document.addEventListener("DOMContentLoaded", initRatingButtons);
