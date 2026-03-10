@@ -4,7 +4,9 @@
 const SUPABASE_URL = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
 
-const supabase = window.supabase.createClient(
+const { createClient } = supabase;
+
+const supabaseClient = createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
