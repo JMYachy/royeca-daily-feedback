@@ -119,8 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .from("table_reports")
         .insert([
           {
-            branch_name: "CSRSU",
-            role: "CSRSU/Clients",
+            branch_name: "HACU",
+            role: "HACU/Clients",
             rating: selectedRating,
             created_at: new Date().toLocaleString()
           }
