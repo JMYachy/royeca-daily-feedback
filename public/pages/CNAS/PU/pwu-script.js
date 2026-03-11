@@ -120,8 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .insert([
           {
             branch_name: "PWU",
-            role: "PWU/Clients",
-            rating: selectedRating,
+            role: "PWU/Employee", rating: selectedRating,
             created_at: new Date().toLocaleString()
           }
         ])
