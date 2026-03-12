@@ -8,7 +8,7 @@ document.getElementById("loginForm").addEventListener("submit", handleLogin);
 async function handleLogin(e) {
   e.preventDefault();
 
-  const username = document.getElementById("username").value.trim();
+  const username = document.getElementById("Username").value.trim();
   const password = document.getElementById("password").value;
   const btn = document.getElementById("btn");
 
