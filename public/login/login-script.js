@@ -77,7 +77,7 @@ async function handleLogin(e) {
     localStorage.setItem("loggedInUser", username);
 
     // IMPORTANT: change this to your real next page
-    window.location.href = "./index.html";
+    window.location.href = "/index.html";
 
     // examples:
     // window.location.href = "./home.html";
