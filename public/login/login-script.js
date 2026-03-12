@@ -12,16 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   form.addEventListener("submit", handleLogin);
-
-  // If already logged in, skip login page
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
-  const loggedInUser = localStorage.getItem("loggedInUser");
-
-  console.log("LOGIN PAGE CHECK:", { isLoggedIn, loggedInUser });
-
-  if (isLoggedIn === "true" && loggedInUser) {
-    window.location.href = "/rate-stats/rate-statistics.html";
-  }
 });
 
 function showError(message) {
@@ -92,14 +82,7 @@ async function handleLogin(e) {
       return;
     }
 
-    if (!user) {
-      showError("Invalid username or password.");
-      btn.disabled = false;
-      btn.textContent = "Login";
-      return;
-    }
-
-    if (user.password !== password) {
+    if (!user || user.password !== password) {
       showError("Invalid username or password.");
       btn.disabled = false;
       btn.textContent = "Login";
@@ -110,7 +93,7 @@ async function handleLogin(e) {
     localStorage.setItem("loggedInUser", user.Username);
     localStorage.setItem("loggedInUserId", String(user.User_ID));
 
-    console.log("STORED LOGIN VALUES:");
+    console.log("LOGIN SAVED:");
     console.log("isLoggedIn =", localStorage.getItem("isLoggedIn"));
     console.log("loggedInUser =", localStorage.getItem("loggedInUser"));
     console.log("loggedInUserId =", localStorage.getItem("loggedInUserId"));
