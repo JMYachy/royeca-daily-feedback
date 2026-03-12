@@ -1,8 +1,3 @@
-const SUPABASE_URL = "https://qjsvsfrqfnrwzdxtrebb.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg";
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
 
@@ -66,42 +61,30 @@ async function handleLogin(e) {
   btn.textContent = "Logging in...";
 
   try {
-    const { data: user, error } = await supabase
-      .from("user_table")
-      .select('User_ID, Username, password')
-      .eq("Username", username)
-      .maybeSingle();
+    // Send login request to server-side API
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+      credentials: "include", // Include cookies for session
+    });
 
-    console.log("USER LOOKUP:", { user, error });
+    const data = await response.json();
 
-    if (error) {
-      console.error("Supabase error:", error);
-      showError("Database error.");
+    if (!response.ok) {
+      showError(data.message || "Login failed. Please try again.");
       btn.disabled = false;
       btn.textContent = "Login";
       return;
     }
 
-    if (!user || user.password !== password) {
-      showError("Invalid username or password.");
-      btn.disabled = false;
-      btn.textContent = "Login";
-      return;
-    }
-
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("loggedInUser", user.Username);
-    localStorage.setItem("loggedInUserId", String(user.User_ID));
-
-    console.log("LOGIN SAVED:");
-    console.log("isLoggedIn =", localStorage.getItem("isLoggedIn"));
-    console.log("loggedInUser =", localStorage.getItem("loggedInUser"));
-    console.log("loggedInUserId =", localStorage.getItem("loggedInUserId"));
-
+    // Successful login
     window.location.href = "/rate-stats/rate-statistics.html";
 
   } catch (err) {
-    console.error("Unexpected login error:", err);
+    console.error("Login error:", err);
     showError("Something went wrong. Please try again.");
     btn.disabled = false;
     btn.textContent = "Login";
