@@ -97,7 +97,7 @@ async function handleLogin(e) {
     console.log("Login successful. Redirecting to /index.html");
 
     setTimeout(() => {
-      window.location.replace("/index.html");
+      window.location.replace("/pages/CNAS/DRLRU/drlru-employee.html");
     }, 300);
   } catch (err) {
     console.error("Unexpected error:", err);
