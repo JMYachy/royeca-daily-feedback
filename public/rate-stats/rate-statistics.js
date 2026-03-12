@@ -1,5 +1,5 @@
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON = 'YOUR_ANON_KEY';
+const SUPABASE_URL = 'https://qjsvsfrqfnrwzdxtrebb.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg';
 
 const DEPTS = [
   { id: 'Human Resources', icon: '👥' },
