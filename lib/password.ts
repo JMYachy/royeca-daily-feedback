@@ -17,31 +17,53 @@ export async function hashPassword(password: string): Promise<string> {
 
 /**
  * Verify a password against a stored hash
- * Extracts salt and iterations from stored hash and compares
+ * Supports both old format (salt:hash with sha512) and new format (salt$iterations$hash with sha256)
  */
 export async function verifyPassword(
   password: string,
   storedHash: string
 ): Promise<boolean> {
   try {
-    // Extract salt and iterations from stored hash
-    const [salt, iterations, hash] = storedHash.split('$');
+    // Try new format first: salt$iterations$hash
+    if (storedHash.includes('$')) {
+      const [salt, iterations, hash] = storedHash.split('$');
+      
+      if (!salt || !iterations || !hash) {
+        console.error('Invalid stored password hash format (new format)');
+        return false;
+      }
+
+      const computedHash = crypto
+        .pbkdf2Sync(password, salt, parseInt(iterations, 10), 64, 'sha256')
+        .toString('hex');
+
+      return crypto.timingSafeEqual(
+        Buffer.from(hash),
+        Buffer.from(computedHash)
+      );
+    }
     
-    if (!salt || !iterations || !hash) {
-      console.error('Invalid stored password hash format');
-      return false;
+    // Fallback to old format: salt:hash (with sha512, 100000 iterations)
+    if (storedHash.includes(':')) {
+      const [salt, hash] = storedHash.split(':');
+      
+      if (!salt || !hash) {
+        console.error('Invalid stored password hash format (old format)');
+        return false;
+      }
+
+      const computedHash = crypto
+        .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
+        .toString('hex');
+
+      return crypto.timingSafeEqual(
+        Buffer.from(hash),
+        Buffer.from(computedHash)
+      );
     }
 
-    // Verify the password with the same salt and iterations
-    const computedHash = crypto
-      .pbkdf2Sync(password, salt, parseInt(iterations, 10), 64, 'sha256')
-      .toString('hex');
-
-    // Use constant-time comparison to prevent timing attacks
-    return crypto.timingSafeEqual(
-      Buffer.from(hash),
-      Buffer.from(computedHash)
-    );
+    console.error('Invalid stored password hash format (unknown separator)');
+    return false;
   } catch (error) {
     console.error('Password verification error:', error);
     return false;
