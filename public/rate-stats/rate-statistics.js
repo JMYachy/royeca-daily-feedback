@@ -24,8 +24,14 @@ let slideDir = "r";
 function checkLogin() {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const loggedInUser = localStorage.getItem("loggedInUser");
+  const loggedInUserId = localStorage.getItem("loggedInUserId");
 
-  console.log("RATE PAGE CHECK:", { isLoggedIn, loggedInUser });
+  console.log("RATE PAGE CHECK:");
+  console.log("isLoggedIn =", isLoggedIn);
+  console.log("loggedInUser =", loggedInUser);
+  console.log("loggedInUserId =", loggedInUserId);
+  console.log("current path =", window.location.pathname);
+  console.log("origin =", window.location.origin);
 
   if (isLoggedIn !== "true" || !loggedInUser) {
     window.location.href = "/login/login.html";
