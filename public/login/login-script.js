@@ -45,7 +45,7 @@ async function handleLogin(e) {
     return;
   }
 
-  btn.textContent = "Logging in…";
+  btn.textContent = "Logging in...";
   btn.disabled = true;
 
   try {
@@ -54,19 +54,34 @@ async function handleLogin(e) {
       .select("*")
       .eq("Username", username)
       .eq("password", password)
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    if (error) {
+      console.error("Supabase error:", error);
+      showError("Login failed.");
+      btn.textContent = "Login";
+      btn.disabled = false;
+      return;
+    }
+
+    if (!data) {
       showError("Invalid username or password.");
       btn.textContent = "Login";
       btn.disabled = false;
       return;
     }
 
-    // Success — redirect to dashboard
-    // Change "/" below to your actual dashboard route if different (e.g. "/dashboard")
-    btn.textContent = "Redirecting…";
-    window.location.href = "./index.html";
+    btn.textContent = "Redirecting...";
+
+    // save logged-in user if needed
+    localStorage.setItem("loggedInUser", username);
+
+    // IMPORTANT: change this to your real next page
+    window.location.href = "./dashboard.html";
+
+    // examples:
+    // window.location.href = "./home.html";
+    // window.location.href = "./admin/index.html";
 
   } catch (err) {
     console.error("Login error:", err);
