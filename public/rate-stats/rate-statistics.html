@@ -9,43 +9,24 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="./rate-statistics.css">
+  <link rel="stylesheet" href="rate-statistics.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-  <script>
-    const loggedInUser = localStorage.getItem("loggedInUser");
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-    console.log("RATE PAGE OPENED");
-    console.log("loggedInUser =", loggedInUser);
-    console.log("isLoggedIn =", isLoggedIn);
-
-    if (!loggedInUser || isLoggedIn !== "true") {
-      window.location.href = "../login/login.html";
-    }
-  </script>
-
   <div class="bg-glow"></div>
 
   <div class="page">
+
     <nav class="topnav">
       <a href="../index.html" class="logo">
-        DRJPRH<span class="logo-dash">—</span><span class="logo-accent">Stats</span>
+        DRJPRH<span class="logo-dash">—</span><span class="logo-accent">Statistics</span>
       </a>
-
       <div class="nav-right">
-        <button class="refresh-btn" id="refresh-btn" onclick="doRefresh()">
-          <svg id="r-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10" />
-            <polyline points="1 20 1 14 7 14" />
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-          </svg>
-          Refresh
-        </button>
-
-        <a href="../index.html" class="pill-link">← Back to Hub</a>
+        <button class="nav-pill" id="refresh-btn" onclick="doRefresh()">Refresh</button>
+        <button class="nav-pill" onclick="logout()">Logout</button>
+        <a href="../index.html" class="nav-pill">← Back to Hub</a>
       </div>
     </nav>
 
@@ -54,19 +35,20 @@
       <h1 class="page-title">Rating <span class="t-green">Statistics</span></h1>
       <div class="title-divider"></div>
       <p class="page-sub">
-        Employee &amp; client feedback side by side. Taller bars indicate the most submitted score.
+        Employee &amp; client feedback side by side, pulled from
+        <code style="color:var(--green);font-family:'DM Mono',monospace;font-size:12px">public.table_reports</code>.
+        Taller bars = more submissions for that score.
       </p>
     </div>
 
     <div class="filter-bar">
-      <button class="f-btn active" data-p="daily" onclick="setFilter('daily', this)">Daily</button>
-      <button class="f-btn" data-p="monthly" onclick="setFilter('monthly', this)">Monthly</button>
-      <button class="f-btn" data-p="yearly" onclick="setFilter('yearly', this)">Yearly</button>
+      <button class="f-btn active" onclick="setFilter('daily', this)">Daily</button>
+      <button class="f-btn" onclick="setFilter('monthly', this)">Monthly</button>
+      <button class="f-btn" onclick="setFilter('yearly', this)">Yearly</button>
     </div>
 
     <div class="dept-switcher">
       <button class="arrow-btn" onclick="changeDept(-1)">&#8592;</button>
-
       <div class="dept-chip" id="dept-chip">
         <span class="dept-icon-big" id="d-icon">👥</span>
         <div>
@@ -74,19 +56,19 @@
           <div class="dept-counter" id="d-idx">1 / 5</div>
         </div>
       </div>
-
       <button class="arrow-btn" onclick="changeDept(+1)">&#8594;</button>
     </div>
 
     <div id="main">
       <div class="status-box">
         <h3>⏳ Loading…</h3>
-        <p>Fetching ratings from Firebase Firestore.</p>
+        <p>Fetching ratings from Supabase.</p>
       </div>
     </div>
+
   </div>
 
-  <script src="./rate-statistics.js"></script>
+  <script src="rate-statistics.js"></script>
 </body>
 
 </html>
