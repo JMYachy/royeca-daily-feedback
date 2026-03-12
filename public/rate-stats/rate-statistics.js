@@ -21,6 +21,18 @@ let deptIdx = 0;
 let period = 'daily';
 let slideDir = 'r';
 
+function checkLogin() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  const loggedInUser = localStorage.getItem("loggedInUser");
+
+  if (isLoggedIn !== "true" || !loggedInUser) {
+    window.location.href = "../login/login.html";
+    return false;
+  }
+
+  return true;
+}
+
 function initSupabase() {
   try {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -66,19 +78,19 @@ async function doRefresh() {
 
 function setSpin(on) {
   const btn = document.getElementById('refresh-btn');
-  btn.classList.toggle('spinning', on);
+  if (btn) btn.classList.toggle('spinning', on);
 }
 
 function setFilter(p, btn) {
   period = p;
   document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   render(false);
 }
 
 function parseDate(str) {
   if (!str) return new Date(0);
-  return new Date(str.replace(' ', 'T'));
+  return new Date(str);
 }
 
 function windowStart() {
@@ -148,13 +160,14 @@ function render(slide = false) {
 function buildStrip(emp, cli) {
   const all = [...emp, ...cli];
   const total = all.length;
-  const avg = total ? (all.reduce((s, r) => s + r.rating, 0) / total).toFixed(1) : '—';
-  const eAvg = emp.length ? (emp.reduce((s, r) => s + r.rating, 0) / emp.length).toFixed(1) : '—';
-  const cAvg = cli.length ? (cli.reduce((s, r) => s + r.rating, 0) / cli.length).toFixed(1) : '—';
+  const avg = total ? (all.reduce((s, r) => s + Number(r.rating), 0) / total).toFixed(1) : '—';
+  const eAvg = emp.length ? (emp.reduce((s, r) => s + Number(r.rating), 0) / emp.length).toFixed(1) : '—';
+  const cAvg = cli.length ? (cli.reduce((s, r) => s + Number(r.rating), 0) / cli.length).toFixed(1) : '—';
 
   const freq = Array(10).fill(0);
   all.forEach(r => {
-    if (r.rating >= 1 && r.rating <= 10) freq[r.rating - 1]++;
+    const rating = Number(r.rating);
+    if (rating >= 1 && rating <= 10) freq[rating - 1]++;
   });
 
   const domI = freq.indexOf(Math.max(...freq));
@@ -195,13 +208,14 @@ function buildPanels(emp, cli) {
 
 function buildPanel(type, label, rows, numColorClass) {
   const total = rows.length;
-  const avg = total ? (rows.reduce((s, r) => s + r.rating, 0) / total).toFixed(1) : '—';
-  const sorted = rows.map(r => r.rating).sort((a, b) => a - b);
+  const avg = total ? (rows.reduce((s, r) => s + Number(r.rating), 0) / total).toFixed(1) : '—';
+  const sorted = rows.map(r => Number(r.rating)).sort((a, b) => a - b);
   const median = sorted.length ? sorted[Math.floor(sorted.length / 2)] : '—';
 
   const freq = Array(10).fill(0);
   rows.forEach(r => {
-    if (r.rating >= 1 && r.rating <= 10) freq[r.rating - 1]++;
+    const rating = Number(r.rating);
+    if (rating >= 1 && rating <= 10) freq[rating - 1]++;
   });
 
   const maxF = Math.max(...freq, 1);
@@ -301,8 +315,10 @@ function renderStatus(title, msg) {
   `;
 }
 
-updateDeptChip();
-loadData();
+if (checkLogin()) {
+  updateDeptChip();
+  loadData();
+}
 
 window.doRefresh = doRefresh;
 window.setFilter = setFilter;
