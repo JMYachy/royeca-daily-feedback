@@ -66,7 +66,7 @@ async function handleLogin(e) {
     // Success — redirect to dashboard
     // Change "/" below to your actual dashboard route if different (e.g. "/dashboard")
     btn.textContent = "Redirecting…";
-    window.location.href = "/index.html";
+    window.location.href = "./index.html";
 
   } catch (err) {
     console.error("Login error:", err);
