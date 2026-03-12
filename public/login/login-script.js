@@ -97,7 +97,7 @@ async function handleLogin(e) {
     console.log("Login successful. Redirecting to /index.html");
 
     setTimeout(() => {
-      window.location.replace("/rate-stats/rate-statistics.html");
+      window.location.replace("../rate-stats/rate-statistics.html");
     }, 300);
   } catch (err) {
     console.error("Unexpected error:", err);
