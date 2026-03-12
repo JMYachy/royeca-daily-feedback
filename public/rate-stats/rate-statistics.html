@@ -17,12 +17,11 @@
     const loggedInUser = localStorage.getItem("loggedInUser");
     const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    console.log("rate-statistics.html loaded");
-    console.log("loggedInUser:", loggedInUser);
-    console.log("isLoggedIn:", isLoggedIn);
+    console.log("RATE PAGE OPENED");
+    console.log("loggedInUser =", loggedInUser);
+    console.log("isLoggedIn =", isLoggedIn);
 
     if (!loggedInUser || isLoggedIn !== "true") {
-      console.log("No valid login found. Redirecting to login page...");
       window.location.href = "../login/login.html";
     }
   </script>
