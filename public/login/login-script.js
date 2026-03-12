@@ -71,7 +71,7 @@ async function handleLogin(e) {
       .select("User_ID, Username, password")
       .eq("Username", username)
       .eq("password", password)
-      .single();
+      .maybeSingle();
 
     console.log("LOGIN RESULT:", { data, error });
 
@@ -91,9 +91,11 @@ async function handleLogin(e) {
     }
 
     localStorage.setItem("loggedInUser", data.Username);
+    localStorage.setItem("loggedInUserId", data.User_ID);
     localStorage.setItem("isLoggedIn", "true");
 
     console.log("loggedInUser =", localStorage.getItem("loggedInUser"));
+    console.log("loggedInUserId =", localStorage.getItem("loggedInUserId"));
     console.log("isLoggedIn =", localStorage.getItem("isLoggedIn"));
 
     btn.textContent = "Redirecting...";
