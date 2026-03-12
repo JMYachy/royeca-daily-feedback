@@ -33,9 +33,7 @@ function showError(message) {
   `;
 
   const btn = document.getElementById("btn");
-  if (btn) {
-    btn.insertAdjacentElement("afterend", err);
-  }
+  if (btn) btn.insertAdjacentElement("afterend", err);
 }
 
 function clearError() {
@@ -52,13 +50,12 @@ async function handleLogin(e) {
   const btn = document.getElementById("btn");
 
   if (!usernameInput || !passwordInput || !btn) {
-    console.error("Missing username, password, or button element");
     showError("Page setup error. Check your HTML IDs.");
     return;
   }
 
   const username = usernameInput.value.trim();
-  const password = passwordInput.value;
+  const password = passwordInput.value.trim();
 
   if (!username || !password) {
     showError("Please enter your username and password.");
@@ -71,16 +68,16 @@ async function handleLogin(e) {
   try {
     const { data, error } = await supabase
       .from("user_table")
-      .select("*")
+      .select("User_ID, Username, password")
       .eq("Username", username)
       .eq("password", password)
-      .maybeSingle();
+      .single();
 
     console.log("LOGIN RESULT:", { data, error });
 
     if (error) {
       console.error("Supabase error:", error);
-      showError("Login failed. Please try again.");
+      showError("Invalid username or password.");
       btn.textContent = "Login";
       btn.disabled = false;
       return;
@@ -93,20 +90,18 @@ async function handleLogin(e) {
       return;
     }
 
-    localStorage.setItem("loggedInUser", username);
+    localStorage.setItem("loggedInUser", data.Username);
     localStorage.setItem("isLoggedIn", "true");
 
-    console.log("Saved loggedInUser:", localStorage.getItem("loggedInUser"));
-    console.log("Saved isLoggedIn:", localStorage.getItem("isLoggedIn"));
+    console.log("loggedInUser =", localStorage.getItem("loggedInUser"));
+    console.log("isLoggedIn =", localStorage.getItem("isLoggedIn"));
 
     btn.textContent = "Redirecting...";
 
-    const targetUrl = new URL("../rate-stats/rate-statistics.html", window.location.href).href;
-    console.log("Redirecting to:", targetUrl);
-
     setTimeout(() => {
-      window.location.href = targetUrl;
+      window.location.href = "../rate-stats/rate-statistics.html";
     }, 300);
+
   } catch (err) {
     console.error("Unexpected error:", err);
     showError("Something went wrong. Please try again.");
