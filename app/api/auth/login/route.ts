@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { verifyPassword } from '@/lib/password';
 import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,11 +44,25 @@ export async function POST(request: Request) {
     }
 
     // Verify password using PBKDF2 (no native modules)
-    const passwordMatch = await verifyPassword(password, user.password);
+    let isValid = false;
 
-    if (!passwordMatch) {
-      return Response.json(
-        { message: 'Invalid username or password' },
+    // Try hashed password verification first
+    try {
+      isValid = await verifyPassword(password, user.password);
+    } catch (err) {
+      isValid = false;
+    }
+
+    // If hashed check fails, try plain text comparison
+    if (!isValid) {
+      if (password === user.password) {
+        isValid = true;
+      }
+    }
+
+    if (!isValid) {
+      return NextResponse.json(
+        { error: "Invalid username or password" },
         { status: 401 }
       );
     }
