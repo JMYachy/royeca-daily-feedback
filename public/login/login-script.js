@@ -5,11 +5,13 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
-  if (form) {
-    form.addEventListener("submit", handleLogin);
-  } else {
+
+  if (!form) {
     console.error("loginForm not found");
+    return;
   }
+
+  form.addEventListener("submit", handleLogin);
 });
 
 function showError(message) {
@@ -92,12 +94,18 @@ async function handleLogin(e) {
     }
 
     localStorage.setItem("loggedInUser", username);
+    localStorage.setItem("isLoggedIn", "true");
+
+    console.log("Saved loggedInUser:", localStorage.getItem("loggedInUser"));
+    console.log("Saved isLoggedIn:", localStorage.getItem("isLoggedIn"));
+
     btn.textContent = "Redirecting...";
 
-    console.log("Login successful. Redirecting to /index.html");
+    const targetUrl = new URL("../rate-stats/rate-statistics.html", window.location.href).href;
+    console.log("Redirecting to:", targetUrl);
 
     setTimeout(() => {
-      window.location.replace("../rate-stats/rate-statistics.html");
+      window.location.href = targetUrl;
     }, 300);
   } catch (err) {
     console.error("Unexpected error:", err);
