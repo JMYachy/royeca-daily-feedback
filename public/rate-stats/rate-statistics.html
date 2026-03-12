@@ -9,14 +9,27 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="rate-statistics.css">
+  <link rel="stylesheet" href="./rate-statistics.css">
 </head>
 
 <body>
+  <script>
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    console.log("rate-statistics.html loaded");
+    console.log("loggedInUser:", loggedInUser);
+    console.log("isLoggedIn:", isLoggedIn);
+
+    if (!loggedInUser || isLoggedIn !== "true") {
+      console.log("No valid login found. Redirecting to login page...");
+      window.location.href = "../login/login.html";
+    }
+  </script>
+
   <div class="bg-glow"></div>
 
   <div class="page">
-
     <nav class="topnav">
       <a href="../index.html" class="logo">
         DRJPRH<span class="logo-dash">—</span><span class="logo-accent">Stats</span>
@@ -72,18 +85,9 @@
         <p>Fetching ratings from Firebase Firestore.</p>
       </div>
     </div>
-
   </div>
 
-  <script>
-    const loggedInUser = localStorage.getItem("loggedInUser");
-
-    if (!loggedInUser) {
-      window.location.replace("../login/login.html");
-    }
-  </script>
-
-  <script src="rate-statistics.js"></script>
+  <script src="./rate-statistics.js"></script>
 </body>
 
 </html>
