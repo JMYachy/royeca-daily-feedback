@@ -12,6 +12,7 @@ function showError(message) {
   const err = document.createElement("div");
   err.id = "loginError";
   err.textContent = message;
+
   err.style.cssText = `
     margin-top: 12px;
     padding: 10px 14px;
@@ -21,7 +22,6 @@ function showError(message) {
     font-size: 13px;
     color: #f87171;
     text-align: center;
-    animation: fadeUp 0.3s ease both;
   `;
 
   document.getElementById("btn").insertAdjacentElement("afterend", err);
@@ -56,9 +56,11 @@ async function handleLogin(e) {
       .eq("password", password)
       .maybeSingle();
 
+    console.log("LOGIN RESULT:", data, error);
+
     if (error) {
       console.error("Supabase error:", error);
-      showError("Login failed.");
+      showError("Login failed. Please try again.");
       btn.textContent = "Login";
       btn.disabled = false;
       return;
@@ -71,20 +73,18 @@ async function handleLogin(e) {
       return;
     }
 
-    btn.textContent = "Redirecting...";
-
-    // save logged-in user if needed
+    // Save login session
     localStorage.setItem("loggedInUser", username);
 
-    // IMPORTANT: change this to your real next page
-    window.location.href = "/";
+    btn.textContent = "Redirecting...";
 
-    // examples:
-    // window.location.href = "./home.html";
-    // window.location.href = "./admin/index.html";
+    console.log("Login successful. Redirecting...");
+
+    // Redirect to homepage (public/index.html)
+    window.location.replace("/");
 
   } catch (err) {
-    console.error("Login error:", err);
+    console.error("Unexpected error:", err);
     showError("Something went wrong. Please try again.");
     btn.textContent = "Login";
     btn.disabled = false;
