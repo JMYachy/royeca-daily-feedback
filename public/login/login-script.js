@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("LOGIN PAGE CHECK:", { isLoggedIn, loggedInUser });
 
   if (isLoggedIn === "true" && loggedInUser) {
-    window.location.href = "../rate-stats/rate-statistics.html";
+    window.location.href = "/rate-stats/rate-statistics.html";
   }
 });
 
@@ -115,7 +115,7 @@ async function handleLogin(e) {
     console.log("loggedInUser =", localStorage.getItem("loggedInUser"));
     console.log("loggedInUserId =", localStorage.getItem("loggedInUserId"));
 
-    window.location.href = "../rate-stats/rate-statistics.html";
+    window.location.href = "/rate-stats/rate-statistics.html";
 
   } catch (err) {
     console.error("Unexpected login error:", err);

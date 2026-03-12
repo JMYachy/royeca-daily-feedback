@@ -28,7 +28,7 @@ function checkLogin() {
   console.log("RATE PAGE CHECK:", { isLoggedIn, loggedInUser });
 
   if (isLoggedIn !== "true" || !loggedInUser) {
-    window.location.href = "../login/login.html";
+    window.location.href = "/login/login.html";
     return false;
   }
 
@@ -39,7 +39,7 @@ function logout() {
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("loggedInUser");
   localStorage.removeItem("loggedInUserId");
-  window.location.href = "../login/login.html";
+  window.location.href = "/login/login.html";
 }
 
 function initSupabase() {
