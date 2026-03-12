@@ -2,11 +2,9 @@ const SUPABASE_URL = 'https://qjsvsfrqfnrwzdxtrebb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg';
 
 const DEPTS = [
-  { id: "HRMU", icon: "👥" },
-  { id: "PSU", icon: "💻" },
-  { id: "PU", icon: "📈" },
-  { id: "SU", icon: "🎧" },
-  { id: "APU", icon: "💰" },
+  { id: "admin", icon: "👥" },
+  { id: "HACU", icon: "💻" },
+  { id: "DS", icon: "📈" },
 ];
 
 const ROLE_EMP = "employee";
@@ -76,6 +74,7 @@ async function loadData() {
   }
 
   allReports = data || [];
+  console.log("Loaded Reports:", allReports); allReports = data || [];
   render();
 }
 
@@ -92,7 +91,15 @@ function setFilter(p, btn) {
 
 function parseDate(str) {
   if (!str) return new Date(0);
-  return new Date(str);
+
+  const d = new Date(str);
+
+  if (isNaN(d.getTime())) {
+    console.warn("Invalid date format:", str);
+    return new Date(0);
+  }
+
+  return d;
 }
 
 function windowStart() {
@@ -145,8 +152,13 @@ function render(slide = false) {
   const dept = DEPTS[deptIdx];
   const inWindow = filterByPeriod(allReports);
   const forDept = inWindow.filter(r => r.branch_name === dept.id);
-  const emp = forDept.filter(r => String(r.role).toLowerCase() === ROLE_EMP);
-  const cli = forDept.filter(r => String(r.role).toLowerCase() === ROLE_CLI);
+  const emp = forDept.filter(r =>
+    String(r.role || "").toLowerCase().includes("employee")
+  );
+
+  const cli = forDept.filter(r =>
+    String(r.role || "").toLowerCase().includes("client")
+  );
 
   const main = document.getElementById("main");
   if (!main) return;
