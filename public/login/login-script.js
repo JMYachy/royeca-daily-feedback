@@ -3,7 +3,14 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-document.getElementById("loginForm").addEventListener("submit", handleLogin);
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("loginForm");
+  if (form) {
+    form.addEventListener("submit", handleLogin);
+  } else {
+    console.error("loginForm not found");
+  }
+});
 
 function showError(message) {
   const existing = document.getElementById("loginError");
@@ -12,7 +19,6 @@ function showError(message) {
   const err = document.createElement("div");
   err.id = "loginError";
   err.textContent = message;
-
   err.style.cssText = `
     margin-top: 12px;
     padding: 10px 14px;
@@ -24,7 +30,10 @@ function showError(message) {
     text-align: center;
   `;
 
-  document.getElementById("btn").insertAdjacentElement("afterend", err);
+  const btn = document.getElementById("btn");
+  if (btn) {
+    btn.insertAdjacentElement("afterend", err);
+  }
 }
 
 function clearError() {
@@ -36,9 +45,18 @@ async function handleLogin(e) {
   e.preventDefault();
   clearError();
 
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
   const btn = document.getElementById("btn");
+
+  if (!usernameInput || !passwordInput || !btn) {
+    console.error("Missing username, password, or button element");
+    showError("Page setup error. Check your HTML IDs.");
+    return;
+  }
+
+  const username = usernameInput.value.trim();
+  const password = passwordInput.value;
 
   if (!username || !password) {
     showError("Please enter your username and password.");
@@ -56,7 +74,7 @@ async function handleLogin(e) {
       .eq("password", password)
       .maybeSingle();
 
-    console.log("LOGIN RESULT:", data, error);
+    console.log("LOGIN RESULT:", { data, error });
 
     if (error) {
       console.error("Supabase error:", error);
@@ -73,16 +91,14 @@ async function handleLogin(e) {
       return;
     }
 
-    // Save login session
     localStorage.setItem("loggedInUser", username);
-
     btn.textContent = "Redirecting...";
 
-    console.log("Login successful. Redirecting...");
+    console.log("Login successful. Redirecting to /index.html");
 
-    // Redirect to homepage (public/index.html)
-    window.location.replace("/");
-
+    setTimeout(() => {
+      window.location.replace("/index.html");
+    }, 300);
   } catch (err) {
     console.error("Unexpected error:", err);
     showError("Something went wrong. Please try again.");
