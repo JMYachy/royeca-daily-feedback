@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import bcrypt from 'bcrypt';
+import { verifyPassword } from '@/lib/password';
 import { cookies } from 'next/headers';
 
 const supabase = createClient(
@@ -42,8 +42,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify password (compare with bcrypt-hashed password)
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    // Verify password using PBKDF2 (no native modules)
+    const passwordMatch = await verifyPassword(password, user.password);
 
     if (!passwordMatch) {
       return Response.json(
