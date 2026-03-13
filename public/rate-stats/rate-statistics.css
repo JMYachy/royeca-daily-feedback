@@ -206,53 +206,29 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
   margin-bottom: 32px;
+  position: relative;
+  z-index: 40;
 }
 
-.arrow-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--border2);
-  background: var(--surface2);
-  color: var(--muted2);
-  font-size: 17px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all .2s;
-  flex-shrink: 0;
-  line-height: 1;
+.pill-wrap {
+  position: relative;
+  display: inline-block;
 }
 
-.arrow-btn:hover {
-  background: var(--green-dim);
-  border-color: var(--green);
-  color: var(--green);
-  transform: scale(1.08);
-}
-
-.arrow-btn:active {
-  transform: scale(.92);
-}
-
-.dept-chip {
-  display: flex;
-  align-items: center;
-  gap: 13px;
+/* ── Option C: Stacked chip ── */
+.stacked-chip {
+  display: inline-flex;
+  flex-direction: column;
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: var(--r2);
-  padding: 12px 28px;
-  min-width: 250px;
-  justify-content: center;
-  position: relative;
   overflow: hidden;
+  min-width: 340px;
+  position: relative;
 }
 
-.dept-chip::before {
+.stacked-chip::before {
   content: '';
   position: absolute;
   top: 0;
@@ -260,26 +236,181 @@ body::after {
   right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--green) 60%, transparent);
-  border-radius: var(--r2) var(--r2) 0 0;
+  pointer-events: none;
 }
 
-.dept-icon-big {
-  font-size: 26px;
-  line-height: 1;
+.chip-search-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
 }
 
-.dept-name-big {
+.chip-search-icon {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.chip-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+}
+
+.chip-search-input::placeholder {
+  color: var(--muted);
+}
+
+.chip-nav-row {
+  display: flex;
+  align-items: center;
+}
+
+.chip-nav-btn {
+  width: 44px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  color: var(--muted2);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  transition: background .15s, color .15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.chip-nav-btn-right {
+  border-right: none;
+  border-left: 1px solid var(--border);
+}
+
+.chip-nav-btn:hover {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+.chip-nav-btn:active {
+  transform: scale(.92);
+}
+
+.chip-center {
+  flex: 1;
+  padding: 10px 16px;
+  min-width: 0;
+}
+
+.chip-name {
   font-family: 'Playfair Display', serif;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.dept-counter {
+.chip-sub {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* ── Autocomplete dropdown ── */
+.ac-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  min-width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  overflow: hidden;
+  z-index: 50;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.ac-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--green) 60%, transparent);
+}
+
+.ac-dropdown.open {
+  display: block;
+}
+
+.ac-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .12s;
+  border-bottom: 1px solid var(--border);
+}
+
+.ac-item:last-child {
+  border-bottom: none;
+}
+
+.ac-item:hover,
+.ac-item.ac-active {
+  background: var(--green-dim);
+}
+
+.ac-item.ac-active .ac-label {
+  color: var(--green);
+}
+
+.ac-label {
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-label mark {
+  background: transparent;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.ac-id {
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  flex-shrink: 0;
+  letter-spacing: .04em;
+}
+
+.ac-more {
+  padding: 8px 16px;
   font-size: 11px;
   color: var(--muted);
-  font-weight: 500;
-  margin-top: 2px;
   font-family: 'DM Mono', monospace;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  letter-spacing: .04em;
 }
 
 .summary-strip {
@@ -332,6 +463,10 @@ body::after {
   gap: 18px;
 }
 
+.panels-overall {
+  margin-top: 18px;
+}
+
 @media (max-width: 760px) {
   .panels {
     grid-template-columns: 1fr;
@@ -363,6 +498,19 @@ body::after {
 
 .panel.cli::before {
   background: linear-gradient(90deg, transparent, var(--green) 35%, var(--gold) 65%, transparent);
+}
+
+.panel.ovr::before {
+  background: linear-gradient(90deg, transparent, var(--green) 20%, #fff 50%, var(--gold) 80%, transparent);
+}
+
+.dot-ovr {
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.dom-badge.ovr strong {
+  color: #ffffff;
 }
 
 .panel-head {
