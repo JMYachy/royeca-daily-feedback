@@ -237,7 +237,7 @@ body::after {
 .stacked-chip {
   display: inline-flex;
   flex-direction: column;
-  background: var(--surface);
+  background: grey;
   border: 1px solid var(--border2);
   border-radius: var(--r2);
   overflow: hidden;
