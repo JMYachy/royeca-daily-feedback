@@ -261,7 +261,7 @@ body::after {
   align-items: center;
   gap: 9px;
   padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid whitesmoke;
 }
 
 .chip-search-icon {
