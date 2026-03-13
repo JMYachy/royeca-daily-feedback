@@ -53,6 +53,9 @@ const DEPTS = [
   //HIMS
   { id: "HIMS", label: "Health Information Management Section", icon: "📈" },
 
+  //IHOMPU
+  { id: "IHOMPU", label: "Integrated Hospital Operations & Management Program Unit", icon: "📈" },
+
 
 
 ];
