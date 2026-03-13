@@ -126,9 +126,9 @@ body::after {
 }
 
 .nav-pill:hover {
-  color: var(--green);
-  border-color: var(--green);
-  background: var(--green-dim);
+  color: whitesmoke;
+  border-color: black;
+  background: grey;
 }
 
 .nav-pill.spinning svg {
