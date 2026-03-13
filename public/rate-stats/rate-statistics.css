@@ -252,7 +252,7 @@ body::after {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--green) 60%, transparent);
+  background: goldenrod;
   pointer-events: none;
 }
 
