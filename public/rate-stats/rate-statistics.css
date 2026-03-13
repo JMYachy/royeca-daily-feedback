@@ -293,14 +293,14 @@ body::after {
   height: 48px;
   border: none;
   background: transparent;
-  color: var(--muted2);
+  color: whitesmoke;
   cursor: pointer;
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid whitesmoke;
   transition: background .15s, color .15s;
   font-family: 'DM Sans', sans-serif;
 }
