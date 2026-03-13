@@ -82,6 +82,7 @@ const DEPTS = [
   { id: "CTU", label: "Center for Teens Unit", icon: "📈" },
   { id: "HACU", label: "HIV & AIDS Core Unit", icon: "📈" },
   { id: "HEMU", label: "Health & Environment Management Unit", icon: "📈" },
+  { id: "HRPU", label: "High Risk Pregnancy Unit", icon: "📈" },
 
 ];
 
