@@ -93,6 +93,8 @@ const DEPTS = [
   { id: "ICU", label: "Intensive Care Unit", icon: "📈" },
   { id: "IPCU", label: "Infection Prevention & Control Unit", icon: "📈" },
   { id: "NICU", label: "Neonatal Intensive Care Unit", icon: "📈" },
+  { id: "PACU", label: "Post Anesthesia Care Unit", icon: "📈" },
+  { id: "PRU", label: "Pulmonary/Respiratory Unit", icon: "📈" },
 
 ];
 
