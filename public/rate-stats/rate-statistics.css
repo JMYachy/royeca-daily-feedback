@@ -114,7 +114,7 @@ body::after {
   gap: 6px;
   padding: 7px 16px;
   border-radius: 100px;
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   background: grey;
   color: whitesmoke;
   font-size: 12px;
