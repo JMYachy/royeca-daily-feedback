@@ -65,7 +65,7 @@ body::after {
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 36px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #253900;
 }
 
 .logo {
