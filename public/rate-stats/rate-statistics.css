@@ -160,6 +160,7 @@ body::after {
   font-weight: 900;
   line-height: 1.1;
   letter-spacing: .01em;
+  color: grey;
 }
 
 .page-title .t-green {
