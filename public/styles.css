@@ -237,11 +237,11 @@ main {
   line-height: 1.12;
   letter-spacing: -0.5px;
   margin-bottom: 14px;
-  color: var(--text);
+  color: #253900;
 }
 
 .hero h1 .highlight {
-  color: var(--gold);
+  color: #253900;
 }
 
 .divider {
