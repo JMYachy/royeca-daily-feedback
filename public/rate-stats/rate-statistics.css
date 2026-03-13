@@ -57,17 +57,31 @@ body::after {
   padding: 0 28px 80px;
 }
 
-.topnav::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 1px;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(155, 236, 0, 0.4),
-      transparent);
+.topnav {
+  padding: 28px 28px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-bottom: 36px;
+
+  /* transparent background */
+  background: rgba(37, 57, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  border-bottom: 1px solid rgba(155, 236, 0, 0.12);
+
+  /* sticky */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  /* full width */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .logo {
