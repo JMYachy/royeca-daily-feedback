@@ -199,7 +199,7 @@ body::after {
   border-radius: 100px;
   border: none;
   background: transparent;
-  color: white;
+  color: goldenrod;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
