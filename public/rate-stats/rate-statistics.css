@@ -300,14 +300,14 @@ body::after {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-right: 1px solid#253900;
+  border-right: 1px solid goldenrod;
   transition: background .15s, color .15s;
   font-family: 'DM Sans', sans-serif;
 }
 
 .chip-nav-btn-right {
   border-right: none;
-  border-left: 1px solid #253900;
+  border-left: 1px solid goldenrod;
 }
 
 .chip-nav-btn:hover {
@@ -329,7 +329,7 @@ body::after {
   font-family: 'Playfair Display', serif;
   font-size: 15px;
   font-weight: 700;
-  color: var(--text);
+  color: #253900;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -338,7 +338,7 @@ body::after {
 .chip-sub {
   font-size: 11px;
   font-family: 'DM Mono', monospace;
-  color: whitesmoke;
+  color: #253900;
   margin-top: 3px;
 }
 
@@ -350,9 +350,9 @@ body::after {
   left: 0;
   right: 0;
   min-width: 100%;
-  background: grey;
+  background: whitesmoke;
   border: 1px solid goldenrod;
-  border-radius: white;
+  border-radius: #253900;
   overflow: hidden;
   z-index: 50;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
@@ -388,11 +388,11 @@ body::after {
 
 .ac-item:hover,
 .ac-item.ac-active {
-  background: #253900, transparent;
+  background: goldenrod, transparent;
 }
 
 .ac-item.ac-active .ac-label {
-  color: whitesmoke;
+  color: #253900;
 }
 
 .ac-label {
@@ -408,7 +408,7 @@ body::after {
 
 .ac-label mark {
   background: transparent;
-  color: #253900;
+  color: goldenrod;
   font-weight: 600;
 }
 
