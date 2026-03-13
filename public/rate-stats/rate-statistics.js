@@ -43,6 +43,9 @@ const DEPTS = [
   { id: "JOMU", label: "Janitorial/Orderlies Management Unit", icon: "📈" },
   { id: "MMU", label: "Materials Management Unit", icon: "📈" },
 
+  //EMD
+  { id: "EMD", label: "Emergency Medicine Department", icon: "📈" },
+
 
 
 ];
