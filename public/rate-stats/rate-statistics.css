@@ -186,8 +186,8 @@ body::after {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: grey;
-  border: 1px solid var(--border);
+  background: whitesmoke;
+  border: 1px solid goldenrod;
   border-radius: 100px;
   padding: 5px;
   width: fit-content;
@@ -199,7 +199,7 @@ body::after {
   border-radius: 100px;
   border: none;
   background: transparent;
-  color: whitesmoke;
+  color: #253900;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -237,9 +237,9 @@ body::after {
 .stacked-chip {
   display: inline-flex;
   flex-direction: column;
-  background: grey;
-  border: 1px solid var(--border2);
-  border-radius: var(--r2);
+  background: whitesmoke;
+  border: 1px solid goldenrod;
+  border-radius: gold;
   overflow: hidden;
   min-width: 340px;
   position: relative;
@@ -261,11 +261,11 @@ body::after {
   align-items: center;
   gap: 9px;
   padding: 10px 14px;
-  border-bottom: 1px solid whitesmoke;
+  border-bottom: 1px solid goldenrod;
 }
 
 .chip-search-icon {
-  color: white;
+  color: #253900;
   flex-shrink: 0;
 }
 
@@ -275,12 +275,12 @@ body::after {
   background: transparent;
   font-size: 13px;
   font-family: 'DM Sans', sans-serif;
-  color: white;
+  color: #253900;
   outline: none;
 }
 
 .chip-search-input::placeholder {
-  color: whitesmoke;
+  color: #253900;
 }
 
 .chip-nav-row {
@@ -293,21 +293,21 @@ body::after {
   height: 48px;
   border: none;
   background: transparent;
-  color: whitesmoke;
+  color: #253900;
   cursor: pointer;
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-right: 1px solid whitesmoke;
+  border-right: 1px solid#253900;
   transition: background .15s, color .15s;
   font-family: 'DM Sans', sans-serif;
 }
 
 .chip-nav-btn-right {
   border-right: none;
-  border-left: 1px solid whitesmoke;
+  border-left: 1px solid #253900;
 }
 
 .chip-nav-btn:hover {
