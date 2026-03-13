@@ -125,8 +125,8 @@ nav {
   font-weight: 500;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #2d2e2d;
-  border: 1px solid rgba(42, 43, 42, 0.35);
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.35);
   padding: 4px 12px;
   border-radius: 100px;
   background: rgba(1, 57, 20, 0.08);
