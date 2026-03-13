@@ -84,6 +84,7 @@ const DEPTS = [
   { id: "HEMU", label: "Health & Environment Management Unit", icon: "📈" },
   { id: "HRPU", label: "High Risk Pregnancy Unit", icon: "📈" },
   { id: "NBSU", label: "New Born Screening Unit", icon: "📈" },
+  { id: "RHFPU", label: "Reproductive Health & Family Planning Unit", icon: "📈" },
 
 ];
 
