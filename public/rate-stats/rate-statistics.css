@@ -149,7 +149,7 @@ body::after {
   font-size: 10px;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: #253900;
   display: block;
   margin-bottom: 10px;
 }
