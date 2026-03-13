@@ -8,10 +8,8 @@ const DEPTS = [
   { id: "HRMU", label: "Human Resource Management Unit", icon: "👥" },
   { id: "PSU", label: "Property & Supply Unit", icon: "💻" },
   { id: "PU", label: "Procurement Unit", icon: "📈" },
+  { id: "SU", label: "Security Unit", icon: "📈" },
 
-  { id: "Admin", label: "Admin", icon: "👥" },
-  { id: "HACU", label: "HACU", icon: "💻" },
-  { id: "DS", label: "Data Science", icon: "📈" },
 
 ];
 
