@@ -27,6 +27,8 @@ const DEPTS = [
   { id: "MWU", label: "Medical Ward Unit", icon: "📈" },
   { id: "OBWU", label: "OB-Gyne Ward Unit", icon: "📈" },
   { id: "ORU", label: "Operating Room Unit", icon: "📈" },
+  { id: "PU", label: "Payward Unit", icon: "📈" },
+
 
 
 
