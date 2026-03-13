@@ -193,8 +193,136 @@ function filterByPeriod(rows) {
 }
 
 // ─── DEPT SWITCHER ────────────────────────────────────────────────────────────
+let filteredDepts = DEPTS.slice();
+let acHighlight = 0;
+const AC_MAX = 8;
+
+function matchDepts(q) {
+  if (!q) return DEPTS.slice();
+  const lq = q.toLowerCase();
+  return DEPTS.filter(d =>
+    d.label.toLowerCase().includes(lq) || d.id.toLowerCase().includes(lq)
+  );
+}
+
+function highlightMatch(text, query) {
+  if (!query) return text;
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return text;
+  return text.slice(0, idx)
+    + `<mark>${text.slice(idx, idx + query.length)}</mark>`
+    + text.slice(idx + query.length);
+}
+
+// ── Autocomplete open/close ──
+function openAC() {
+  // intentionally disabled — dropdown only opens when typing
+}
+
+function closeAC() {
+  document.getElementById("ac-dropdown").classList.remove("open");
+  const searchEl = document.getElementById("dept-search");
+  if (searchEl) searchEl.value = "";
+}
+
+function renderAC(query) {
+  const drop = document.getElementById("ac-dropdown");
+  const results = matchDepts(query);
+  acHighlight = 0;
+  drop.innerHTML = "";
+
+  if (results.length === 0) {
+    drop.innerHTML = `<div class="ac-more">No departments match "${query}"</div>`;
+    return;
+  }
+
+  results.slice(0, AC_MAX).forEach((d, i) => {
+    const item = document.createElement("div");
+    item.className = "ac-item" + (i === 0 ? " ac-active" : "");
+    item.innerHTML = `
+      <span class="ac-label">${highlightMatch(d.label, query)}</span>
+      <span class="ac-id">${d.id}</span>`;
+    item.onmousedown = () => selectFromAC(d);
+    drop.appendChild(item);
+  });
+
+  if (results.length > AC_MAX) {
+    const more = document.createElement("div");
+    more.className = "ac-more";
+    more.textContent = `+${results.length - AC_MAX} more — keep typing to narrow`;
+    drop.appendChild(more);
+  }
+}
+
+function selectFromAC(dept) {
+  const newIdx = DEPTS.indexOf(dept);
+  slideDir = newIdx > deptIdx ? "r" : "l";
+  deptIdx = newIdx;
+  filteredDepts = DEPTS.slice();
+  closeAC();
+  updateDeptChip();
+  render(true);
+}
+
+// ── Keyboard nav in dropdown ──
+function handleACKey(e) {
+  const drop = document.getElementById("ac-dropdown");
+  const items = drop.querySelectorAll(".ac-item");
+  if (!drop.classList.contains("open")) {
+    if (e.key === "ArrowDown" || e.key === "Enter") openAC();
+    return;
+  }
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    acHighlight = Math.min(acHighlight + 1, items.length - 1);
+    items.forEach((el, i) => el.classList.toggle("ac-active", i === acHighlight));
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    acHighlight = Math.max(acHighlight - 1, 0);
+    items.forEach((el, i) => el.classList.toggle("ac-active", i === acHighlight));
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    const active = drop.querySelector(".ac-item.ac-active");
+    if (active) active.onmousedown();
+  } else if (e.key === "Escape") {
+    closeAC();
+  }
+}
+
+// ── Filter as user types ──
+function filterDepts(query) {
+  filteredDepts = matchDepts(query);
+  acHighlight = 0;
+  const drop = document.getElementById("ac-dropdown");
+  const nameEl = document.getElementById("d-name");
+  const idxEl = document.getElementById("d-idx");
+
+  if (query) {
+    renderAC(query);
+    drop.classList.add("open");
+    if (filteredDepts.length > 0) {
+      if (nameEl) nameEl.textContent = filteredDepts[0].label;
+      if (idxEl) idxEl.textContent = `${filteredDepts.length} match${filteredDepts.length !== 1 ? "es" : ""}`;
+    } else {
+      if (nameEl) nameEl.textContent = "No matches";
+      if (idxEl) idxEl.textContent = "0 matches";
+    }
+  } else {
+    drop.classList.remove("open");
+    filteredDepts = DEPTS.slice();
+    const d = DEPTS[deptIdx];
+    if (nameEl) nameEl.textContent = d.label;
+    if (idxEl) idxEl.textContent = `${deptIdx + 1} of ${DEPTS.length} · ${d.id}`;
+  }
+}
+
+// ── Arrow buttons ──
 function changeDept(dir) {
   slideDir = dir > 0 ? "r" : "l";
+  const searchEl = document.getElementById("dept-search");
+  if (searchEl) searchEl.value = "";
+  filteredDepts = DEPTS.slice();
+  closeAC();
   deptIdx = (deptIdx + dir + DEPTS.length) % DEPTS.length;
   updateDeptChip();
   render(true);
@@ -202,9 +330,13 @@ function changeDept(dir) {
 
 function updateDeptChip() {
   const d = DEPTS[deptIdx];
-  document.getElementById("d-icon").textContent = d.icon;
-  document.getElementById("d-name").textContent = d.label;
-  document.getElementById("d-idx").textContent = `${deptIdx + 1} / ${DEPTS.length}`;
+  const nameEl = document.getElementById("d-name");
+  const idxEl = document.getElementById("d-idx");
+  const searchEl = document.getElementById("dept-search");
+
+  if (nameEl) nameEl.textContent = d.label;
+  if (idxEl) idxEl.textContent = `${deptIdx + 1} of ${DEPTS.length} · ${d.id}`;
+  if (searchEl && !searchEl.value) searchEl.placeholder = "Search departments…";
 
   const chip = document.getElementById("dept-chip");
   if (!chip) return;
@@ -296,11 +428,20 @@ function buildStrip(emp, cli) {
 
 // ─── PANELS ──────────────────────────────────────────────────────────────────
 function buildPanels(emp, cli) {
-  const wrap = document.createElement("div");
-  wrap.className = "panels";
-  wrap.appendChild(buildPanel("emp", "👤 Employee", emp, "col-green"));
-  wrap.appendChild(buildPanel("cli", "🤝 Client", cli, "col-gold"));
-  return wrap;
+  const frag = document.createDocumentFragment();
+
+  const row = document.createElement("div");
+  row.className = "panels";
+  row.appendChild(buildPanel("emp", "👤 Employee", emp, "col-green"));
+  row.appendChild(buildPanel("cli", "🤝 Client", cli, "col-gold"));
+  frag.appendChild(row);
+
+  const ovrWrap = document.createElement("div");
+  ovrWrap.className = "panels-overall";
+  ovrWrap.appendChild(buildPanel("ovr", "📊 Overall", [...emp, ...cli], ""));
+  frag.appendChild(ovrWrap);
+
+  return frag;
 }
 
 function buildPanel(type, label, rows, numColorClass) {
@@ -399,3 +540,7 @@ loadData();
 window.doRefresh = doRefresh;
 window.setFilter = setFilter;
 window.changeDept = changeDept;
+window.filterDepts = filterDepts;
+window.openAC = openAC;
+window.closeAC = closeAC;
+window.handleACKey = handleACKey;

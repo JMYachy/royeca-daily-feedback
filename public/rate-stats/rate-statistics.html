@@ -47,15 +47,28 @@
     </div>
 
     <div class="dept-switcher">
-      <button class="arrow-btn" onclick="changeDept(-1)">&#8592;</button>
-      <div class="dept-chip" id="dept-chip">
-        <span class="dept-icon-big" id="d-icon">👥</span>
-        <div>
-          <div class="dept-name-big" id="d-name">Human Resources</div>
-          <div class="dept-counter" id="d-idx">1 / 5</div>
+      <div class="pill-wrap">
+        <div class="stacked-chip" id="dept-chip">
+          <div class="chip-search-row">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" class="chip-search-icon">
+              <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.3" />
+              <path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+            </svg>
+            <input class="chip-search-input" id="dept-search" type="text" placeholder="Search departments…"
+              oninput="filterDepts(this.value)" onblur="setTimeout(closeAC, 160)" onkeydown="handleACKey(event)"
+              autocomplete="off" />
+          </div>
+          <div class="chip-nav-row">
+            <button class="chip-nav-btn" onclick="changeDept(-1)" title="Previous">&#8592;</button>
+            <div class="chip-center">
+              <div class="chip-name" id="d-name">Human Resource Management Unit</div>
+              <div class="chip-sub" id="d-idx">1 of 53 · HRMU</div>
+            </div>
+            <button class="chip-nav-btn chip-nav-btn-right" onclick="changeDept(+1)" title="Next">&#8594;</button>
+          </div>
         </div>
+        <div class="ac-dropdown" id="ac-dropdown"></div>
       </div>
-      <button class="arrow-btn" onclick="changeDept(+1)">&#8594;</button>
     </div>
 
     <div id="main">
