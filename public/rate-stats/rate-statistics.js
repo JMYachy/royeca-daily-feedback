@@ -21,6 +21,10 @@ const DEPTS = [
   { id: "RCRU", label: "Renal Care Respiratory Unit", icon: "📈" },
   { id: "RCU", label: "Rehabilitation Care Unit", icon: "📈" },
 
+  //CNAS
+  { id: "DRLRU", label: "Delivery Room & Labor Room Unit", icon: "📈" },
+  { id: "MWU", label: "Medical Ward Unit", icon: "📈" },
+
 
 
 ];
