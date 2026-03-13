@@ -94,11 +94,11 @@ body::after {
 }
 
 .logo-accent {
-  color: var(--green);
+  color: grey;
 }
 
 .logo-dash {
-  color: var(--gold);
+  color: black;
   margin: 0 4px;
 }
 
