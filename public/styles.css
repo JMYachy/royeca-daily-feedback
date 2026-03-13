@@ -102,7 +102,8 @@ nav {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
-  background: rgba(8, 39, 1, 0.7) backdrop-filter: blur(20px);
+  background: rgba(12, 60, 1, 0.7);
+  backdrop-filter: blur(20px);
 }
 
 .nav-brand {
@@ -111,11 +112,11 @@ nav {
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #242524;
+  color: #424442;
 }
 
 .nav-brand span {
-  color: rgb(4, 4, 4), 17);
+  color: rgb(2, 2, 2);
   font-weight: 400;
 }
 
@@ -124,11 +125,11 @@ nav {
   font-weight: 500;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #464847;
-  border: 1px solid rgba(66, 67, 66, 0.35);
+  color: #2d2e2d;
+  border: 1px solid rgba(42, 43, 42, 0.35);
   padding: 4px 12px;
   border-radius: 100px;
-  background: rgba(2, 70, 24, 0.08);
+  background: rgba(1, 57, 20, 0.08);
 }
 
 /* MAIN */
