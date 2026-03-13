@@ -35,6 +35,14 @@ const DEPTS = [
   { id: "ACLU", label: "Anatomic & Clinical Laboratory Unit", icon: "📈" },
   { id: "BBU", label: "Blood Bank Unit", icon: "📈" },
 
+  //DS
+  { id: "DS", label: "Dental Section", icon: "📈" },
+
+  //EFMS
+  { id: "HKLU", label: "House Keeping & Laundry Unit", icon: "📈" },
+  { id: "JOMU", label: "Janitorial/Orderlies Management Unit", icon: "📈" },
+  { id: "MMU", label: "Materials Management Unit", icon: "📈" },
+
 
 
 ];
