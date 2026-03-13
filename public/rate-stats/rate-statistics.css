@@ -338,7 +338,7 @@ body::after {
 .chip-sub {
   font-size: 11px;
   font-family: 'DM Mono', monospace;
-  color: grey;
+  color: whitesmoke;
   margin-top: 3px;
 }
 
