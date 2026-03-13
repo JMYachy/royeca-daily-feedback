@@ -389,7 +389,7 @@ body::after {
 
 .dot-emp {
   background: var(--green);
-  box-shadow: 0 0 8px rgba(155, 236, 0, .5);
+  box-shadow: 0 0 8px rgb(255, 255, 255);
 }
 
 .dot-cli {
