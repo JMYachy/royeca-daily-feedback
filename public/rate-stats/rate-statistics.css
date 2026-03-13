@@ -70,7 +70,12 @@ body::after {
   background: #253900;
   border-bottom: 1px solid #253900;
 
-  /* FULL WIDTH FIX */
+  /* make it stick */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  /* keep full width */
   width: 100vw;
   margin-left: calc(50% - 50vw);
 }
