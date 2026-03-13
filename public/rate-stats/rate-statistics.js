@@ -65,6 +65,9 @@ const DEPTS = [
   //NSOO
   { id: "NSOO", label: "NSO Office", icon: "📈" },
 
+  //ODFM
+  { id: "ODFM", label: "Outpatient Department/Family Medicine", icon: "📈" },
+
 
 
 ];
