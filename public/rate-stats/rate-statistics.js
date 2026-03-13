@@ -48,6 +48,7 @@ const DEPTS = [
 
   //FMSS
   { id: "ABCU", label: "Accounting, Billing & Claims Unit", icon: "📈" },
+  { id: "COU", label: "Cash Operations Unit", icon: "📈" },
 
 
 
