@@ -20,7 +20,7 @@
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
+  background: white;
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
