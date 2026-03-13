@@ -50,6 +50,9 @@ const DEPTS = [
   { id: "ABCU", label: "Accounting, Billing & Claims Unit", icon: "📈" },
   { id: "COU", label: "Cash Operations Unit", icon: "📈" },
 
+  //HIMS
+  { id: "HIMS", label: "Health Information Management Section", icon: "📈" },
+
 
 
 ];
