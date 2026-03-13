@@ -68,6 +68,11 @@ const DEPTS = [
   //ODFM
   { id: "ODFM", label: "Outpatient Department/Family Medicine", icon: "📈" },
 
+  //PS
+  { id: "PS", label: "Pharmacy Section", icon: "📈" },
+
+
+
 
 
 ];
