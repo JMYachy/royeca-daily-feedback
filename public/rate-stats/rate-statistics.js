@@ -7,7 +7,7 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const DEPTS = [
   { id: "HRMU", label: "Human Resource Management Unit", icon: "👥" },
   { id: "PSU", label: "Property & Supply Unit", icon: "💻" },
-  { id: "DS", label: "Data Science", icon: "📈" },
+  { id: "PU", label: "Procurement Unit", icon: "📈" },
 
   { id: "Admin", label: "Admin", icon: "👥" },
   { id: "HACU", label: "HACU", icon: "💻" },
