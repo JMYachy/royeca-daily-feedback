@@ -5,10 +5,15 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 // 'id' must EXACTLY match the branch_name values stored in your Supabase table.
 // Your sample data uses 'Admin' (capital A), so it's listed here as 'Admin'.
 const DEPTS = [
+  //ASS
   { id: "HRMU", label: "Human Resource Management Unit", icon: "👥" },
   { id: "PSU", label: "Property & Supply Unit", icon: "💻" },
   { id: "PU", label: "Procurement Unit", icon: "📈" },
   { id: "SU", label: "Security Unit", icon: "📈" },
+
+  //CD
+  { id: "APU", label: "Acute Psychiatry Unit", icon: "📈" },
+  { id: "APU", label: "Acute Psychiatry Unit", icon: "📈" },
 
 
 ];
