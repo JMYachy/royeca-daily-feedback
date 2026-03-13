@@ -75,7 +75,7 @@ const DEPTS = [
   { id: "QAS", label: "Quality Assurance Section", icon: "📈" },
 
   //RDS
-  { id: "RDS", label: "Outpatient Department/Family Medicine", icon: "📈" },
+  { id: "RDS", label: "Radiology & Diagnostic Section", icon: "📈" },
 
 ];
 
