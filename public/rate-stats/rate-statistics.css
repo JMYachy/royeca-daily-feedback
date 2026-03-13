@@ -199,7 +199,7 @@ body::after {
   border-radius: 100px;
   border: none;
   background: transparent;
-  color: var(--muted);
+  color: white;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -214,8 +214,8 @@ body::after {
 }
 
 .f-btn.active {
-  background: var(--green);
-  color: var(--bg);
+  background: #253900;
+  color: white;
   box-shadow: 0 4px 18px rgba(155, 236, 0, .22);
 }
 
