@@ -62,6 +62,9 @@ const DEPTS = [
   //NDS
   { id: "NDS", label: "Nutrition & Dietetics Section", icon: "📈" },
 
+  //NSOO
+  { id: "NSOO", label: "NSO Office", icon: "📈" },
+
 
 
 ];
