@@ -56,6 +56,9 @@ const DEPTS = [
   //IHOMPU
   { id: "IHOMPU", label: "Integrated Hospital Operations & Management Program Unit", icon: "📈" },
 
+  //MSW
+  { id: "MSW", label: "Medical Social Work", icon: "📈" },
+
 
 
 ];
