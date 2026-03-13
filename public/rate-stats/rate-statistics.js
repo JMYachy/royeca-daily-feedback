@@ -46,6 +46,9 @@ const DEPTS = [
   //EMD
   { id: "EMD", label: "Emergency Medicine Department", icon: "📈" },
 
+  //FMSS
+  { id: "ABCU", label: "Accounting, Billing & Claims Unit", icon: "📈" },
+
 
 
 ];
