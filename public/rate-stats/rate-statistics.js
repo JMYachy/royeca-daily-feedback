@@ -77,6 +77,11 @@ const DEPTS = [
   //RDS
   { id: "RDS", label: "Radiology & Diagnostic Section", icon: "📈" },
 
+  //SCA
+  { id: "AMSU", label: "Anti-Microbial Stewardship Unit", icon: "📈" },
+  { id: "CTU", label: "Center for Teens Unit", icon: "📈" },
+  { id: "HACU", label: "HIV & AIDS Core Unit", icon: "📈" },
+
 ];
 
 // ─── ROLE KEYWORDS ────────────────────────────────────────────────────────────
