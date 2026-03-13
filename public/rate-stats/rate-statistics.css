@@ -350,9 +350,9 @@ body::after {
   left: 0;
   right: 0;
   min-width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--r2);
+  background: grey;
+  border: 1px solid goldenrod;
+  border-radius: white;
   overflow: hidden;
   z-index: 50;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
