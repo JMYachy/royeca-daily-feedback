@@ -307,7 +307,7 @@ body::after {
 
 .chip-nav-btn-right {
   border-right: none;
-  border-left: 1px solid var(--border);
+  border-left: 1px solid whitesmoke;
 }
 
 .chip-nav-btn:hover {
