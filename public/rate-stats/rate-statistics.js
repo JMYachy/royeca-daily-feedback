@@ -86,6 +86,7 @@ const DEPTS = [
   { id: "NBSU", label: "New Born Screening Unit", icon: "📈" },
   { id: "RHFPU", label: "Reproductive Health & Family Planning Unit", icon: "📈" },
   { id: "TBDU", label: "TB-Dots Unit", icon: "📈" },
+  { id: "WCAK", label: "Wellness Center APE & Konsulta", icon: "📈" },
 
 ];
 
