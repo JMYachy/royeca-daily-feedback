@@ -88,6 +88,11 @@ const DEPTS = [
   { id: "TBDU", label: "TB-Dots Unit", icon: "📈" },
   { id: "WCAK", label: "Wellness Center APE & Konsulta", icon: "📈" },
 
+  //SCAS
+  { id: "CSRSU", label: "Central Supply Room & Sterilization Unit", icon: "📈" },
+  { id: "ICU", label: "Intensive Care Unit", icon: "📈" },
+
+
 ];
 
 // ─── ROLE KEYWORDS ────────────────────────────────────────────────────────────
