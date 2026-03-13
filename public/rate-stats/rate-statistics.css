@@ -392,7 +392,7 @@ body::after {
 }
 
 .ac-item.ac-active .ac-label {
-  color: #253900;
+  color: whitesmoke;
 }
 
 .ac-label {
