@@ -18,6 +18,7 @@ const DEPTS = [
   { id: "DM", label: "Department of Medicine", icon: "📈" },
   { id: "DP", label: "Department of Pediatrics", icon: "📈" },
   { id: "DS", label: "Department of Surgery", icon: "📈" },
+  { id: "RCRU", label: "Renal Care Respiratory Unit", icon: "📈" },
 
 
 
