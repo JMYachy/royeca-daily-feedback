@@ -69,6 +69,7 @@ body::after {
 
   background: #253900;
   border-bottom: 1px solid #253900;
+  
 
   /* make it stick */
   position: sticky;
