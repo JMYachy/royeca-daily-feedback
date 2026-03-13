@@ -58,12 +58,12 @@ body::after {
 }
 
 .topnav {
-  /*padding: 28px 0 22px;*/
+  padding: 28px 0 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  /*gap: 12px;*/
   margin-bottom: 36px;
   background: #253900;
   border-bottom: 1px solid #253900;
