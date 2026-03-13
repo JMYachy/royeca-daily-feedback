@@ -438,7 +438,7 @@ body::after {
 }
 
 .s-chip {
-  background: grey;
+  background: whitesmoke;
   border: 1px solid goldenrod;
   border-radius: white;
   padding: 14px 16px;
@@ -464,12 +464,12 @@ body::after {
   font-size: 20px;
   font-weight: 700;
   line-height: 1;
-  color: whitesmoke;
+  color: #253900;
 }
 
 .s-chip-l {
   font-size: 10px;
-  color: whitesmoke;
+  color: #253900;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: .06em;
