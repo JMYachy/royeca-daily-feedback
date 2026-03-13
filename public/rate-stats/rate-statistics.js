@@ -15,6 +15,7 @@ const DEPTS = [
   { id: "APU", label: "Acute Psychiatry Unit", icon: "📈" },
   { id: "CPU", label: "Child Protection Unit", icon: "📈" },
   { id: "DA", label: "Department of Anesthesia", icon: "📈" },
+  { id: "DM", label: "Department of Medicine", icon: "📈" },
 
 
 ];
