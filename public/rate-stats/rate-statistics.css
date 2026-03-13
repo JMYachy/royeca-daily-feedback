@@ -176,7 +176,7 @@ body::after {
 }
 
 .page-sub {
-  color: var(--muted);
+  color: grey;
   font-size: 14px;
   line-height: 1.65;
   margin-top: 12px;
