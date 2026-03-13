@@ -438,9 +438,9 @@ body::after {
 }
 
 .s-chip {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r2);
+  background: grey;
+  border: 1px solid goldenrod;
+  border-radius: white;
   padding: 14px 16px;
   display: flex;
   align-items: center;
