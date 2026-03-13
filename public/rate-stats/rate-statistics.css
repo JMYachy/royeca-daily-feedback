@@ -265,7 +265,7 @@ body::after {
 }
 
 .chip-search-icon {
-  color: var(--muted);
+  color: white;
   flex-shrink: 0;
 }
 
@@ -275,12 +275,12 @@ body::after {
   background: transparent;
   font-size: 13px;
   font-family: 'DM Sans', sans-serif;
-  color: var(--text);
+  color: white;
   outline: none;
 }
 
 .chip-search-input::placeholder {
-  color: var(--muted);
+  color: whitesmoke;
 }
 
 .chip-nav-row {
