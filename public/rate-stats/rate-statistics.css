@@ -59,16 +59,15 @@ body::after {
 
 .topnav {
 
-  padding: 28px 0 22px;
+  position: relative;
+  z-index: 10;
+  padding: 20px 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 36px;
-  max-width: max-content;
-  background: #253900;
-  border-bottom: 1px solid #253900;
+  border-bottom: 1px solid var(--border);
+  background: rgba(12, 60, 1, 0.7);
+  backdrop-filter: blur(20px);
 }
 
 .logo {
