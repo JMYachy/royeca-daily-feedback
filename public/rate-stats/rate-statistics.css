@@ -167,13 +167,13 @@ body::after {
   color: #253900;
 }
 
-.title-divider {
+/*.title-divider {
   width: 40px;
   height: 2px;
   background: linear-gradient(90deg, var(--gold), var(--green));
   border-radius: 2px;
   margin-top: 14px;
-}
+}*/
 
 .page-sub {
   color: grey;
