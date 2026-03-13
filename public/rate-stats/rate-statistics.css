@@ -388,7 +388,7 @@ body::after {
 
 .ac-item:hover,
 .ac-item.ac-active {
-  background: #253900;
+  background: #253900, transparent;
 }
 
 .ac-item.ac-active .ac-label {
