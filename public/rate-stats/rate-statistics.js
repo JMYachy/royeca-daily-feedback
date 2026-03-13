@@ -59,6 +59,9 @@ const DEPTS = [
   //MSW
   { id: "MSW", label: "Medical Social Work", icon: "📈" },
 
+  //NDS
+  { id: "NDS", label: "Nutrition & Dietetics Section", icon: "📈" },
+
 
 
 ];
