@@ -31,6 +31,10 @@ const DEPTS = [
   { id: "PWU", label: "Pediatric Ward Unit", icon: "📈" },
   { id: "SWU", label: "Surgery Ward Unit", icon: "📈" },
 
+  //DPS
+  { id: "ACLU", label: "Anatomic & Clinical Laboratory Unit", icon: "📈" },
+  { id: "BBU", label: "Blood Bank Unit", icon: "📈" },
+
 
 
 ];
