@@ -116,7 +116,7 @@ nav {
 }
 
 .nav-brand span {
-  color: var(--muted);
+  color: #000000;
   font-weight: 400;
 }
 
