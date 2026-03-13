@@ -91,7 +91,7 @@ const DEPTS = [
   //SCAS
   { id: "CSRSU", label: "Central Supply Room & Sterilization Unit", icon: "📈" },
   { id: "ICU", label: "Intensive Care Unit", icon: "📈" },
-
+  { id: "IPCU", label: "Infection Prevention & Control Unit", icon: "📈" },
 
 ];
 
