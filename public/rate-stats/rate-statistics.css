@@ -517,11 +517,11 @@ body::after {
 }
 
 .fc-1 {
-  background: #ef4444;
+  background: #880808;
 }
 
 .fc-2 {
-  background: #f97316;
+  background: #d35727;
 }
 
 .fc-3 {
@@ -529,11 +529,11 @@ body::after {
 }
 
 .fc-4 {
-  background: #fbbf24;
+  background: #fbde03;
 }
 
 .fc-5 {
-  background: #facc15;
+  background: #e7e003;
 }
 
 .fc-6 {
@@ -541,7 +541,7 @@ body::after {
 }
 
 .fc-7 {
-  background: #9BEC00;
+  background: #c4ff02;
 }
 
 .fc-8 {
@@ -549,11 +549,11 @@ body::after {
 }
 
 .fc-9 {
-  background: #2dd4bf;
+  background: #0dff00;
 }
 
 .fc-10 {
-  background: #c8a84b;
+  background: #13ff02;
 }
 
 .bar-tip {
