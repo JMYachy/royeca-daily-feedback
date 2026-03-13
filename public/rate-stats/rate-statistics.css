@@ -186,7 +186,7 @@ body::after {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: var(--surface);
+  background: grey;
   border: 1px solid var(--border);
   border-radius: 100px;
   padding: 5px;
