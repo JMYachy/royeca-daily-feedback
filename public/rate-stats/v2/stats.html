@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRJPRH — Rate Statistics</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="stats.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="page">
+
+    <nav class="topnav">
+      <a href="/index.html" class="logo">
+        DRJPRH<span class="logo-dash">—</span><span class="logo-accent">Statistics</span>
+      </a>
+      <div class="nav-right">
+        <button class="nav-pill" id="refresh-btn" onclick="doRefresh()">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
+            <path d="M11 6.5A4.5 4.5 0 112.5 4" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+            <path d="M2.5 1.5v2.5H5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Refresh
+        </button>
+        <button class="nav-pill nav-pill-export" id="export-btn" onclick="exportToExcel()">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
+            <path d="M6.5 1.5v6M3.5 5l3 3 3-3M1.5 9.5v1a1 1 0 001 1h8a1 1 0 001-1v-1"
+              stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Save a Copy
+        </button>
+      </div>
+    </nav>
+
+    <div class="page-heading">
+      <span class="eyebrow">Department Analytics</span>
+      <h1 class="page-title">Rating <span class="t-green">Statistics</span></h1>
+      <div class="title-divider"></div>
+      <p class="page-sub">
+        Employee &amp; client feedback side by side, pulled from
+        <code style="color:#253900;font-family:'DM Mono',monospace;font-size:12px">table_reports</code>.
+        Taller bars = more submissions for that score.
+      </p>
+    </div>
+
+    <div class="filter-bar">
+      <button class="f-btn active" onclick="setFilter('daily', this)">Daily</button>
+      <button class="f-btn" onclick="setFilter('monthly', this)">Monthly</button>
+      <button class="f-btn" onclick="setFilter('yearly', this)">Yearly</button>
+    </div>
+
+    <div class="dept-switcher">
+      <div class="pill-wrap">
+        <div class="stacked-chip" id="dept-chip">
+          <div class="chip-search-row">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" class="chip-search-icon">
+              <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.3" />
+              <path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+            </svg>
+            <input class="chip-search-input" id="dept-search" type="text" placeholder="Search departments…"
+              oninput="filterDepts(this.value)" onblur="setTimeout(closeAC, 160)" onkeydown="handleACKey(event)"
+              autocomplete="off" />
+          </div>
+          <div class="chip-nav-row">
+            <button class="chip-nav-btn" onclick="changeDept(-1)" title="Previous">&#8592;</button>
+            <div class="chip-center">
+              <div class="chip-name" id="d-name">Human Resource Management Unit</div>
+              <div class="chip-sub" id="d-idx">1 of 53 · HRMU</div>
+            </div>
+            <button class="chip-nav-btn chip-nav-btn-right" onclick="changeDept(+1)" title="Next">&#8594;</button>
+          </div>
+        </div>
+        <div class="ac-dropdown" id="ac-dropdown"></div>
+      </div>
+    </div>
+
+    <div id="main">
+      <div class="status-box">
+        <h3>⏳ Loading…</h3>
+        <p>Fetching ratings from Supabase.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="stats.js"></script>
+
+</body>
+</html>
