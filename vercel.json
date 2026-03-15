@@ -1,8 +1,9 @@
 {
-  "routes": [
+  "redirects": [
     {
-      "src": "^/pages/.+\\.js$",
-      "status": 404
+      "source": "/pages/:path*.js",
+      "destination": "/404",
+      "permanent": false
     }
   ]
 }
