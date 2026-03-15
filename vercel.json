@@ -1,8 +1,0 @@
-{
-  "routes": [
-    {
-      "src": "^/scripts/.*\\.js$",
-      "status": 404
-    }
-  ]
-}
