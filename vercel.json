@@ -1,9 +1,0 @@
-{
-  "redirects": [
-    {
-      "source": "/pages/:path*.js",
-      "destination": "/404",
-      "permanent": false
-    }
-  ]
-}
