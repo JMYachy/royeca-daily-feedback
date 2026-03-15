@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Saver - Your Path to Homeownership</title>
+    <link rel="stylesheet" href="saver-page.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">Home Saver</div>
+            <nav class="nav">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#savings" class="nav-link">Savings Calculator</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">Build Your Dream Home Today</h1>
+                <p class="hero-subtitle">Track your savings, set goals, and achieve homeownership with our smart savings platform</p>
+                <button class="cta-button">Get Started</button>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose Home Saver?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Track Progress</h3>
+                        <p>Monitor your savings goals with real-time updates and detailed analytics</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Set Goals</h3>
+                        <p>Create custom savings targets and get personalized recommendations</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>Smart Planning</h3>
+                        <p>Calculate your down payment and plan your path to homeownership</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Savings Calculator Section -->
+        <section id="savings" class="calculator">
+            <div class="container">
+                <h2 class="section-title">Savings Calculator</h2>
+                <div class="calculator-card">
+                    <div class="input-group">
+                        <label for="target-price">Home Price Target ($)</label>
+                        <input type="number" id="target-price" placeholder="500000" value="500000">
+                    </div>
+                    <div class="input-group">
+                        <label for="down-payment">Down Payment (%)</label>
+                        <input type="number" id="down-payment" placeholder="20" value="20" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthly-savings">Monthly Savings ($)</label>
+                        <input type="number" id="monthly-savings" placeholder="1000" value="1000">
+                    </div>
+                    <button class="calculate-button">Calculate</button>
+                    <div class="result" id="result" style="display: none;">
+                        <p>Down Payment Needed: <strong id="result-down-payment">$0</strong></p>
+                        <p>Months to Save: <strong id="result-months">0</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <h2>Ready to Start Your Journey?</h2>
+                <p>Join thousands of savers who are building their dream homes</p>
+                <button class="cta-button secondary">Sign Up Now</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Home Saver</h4>
+                    <p>Making homeownership dreams a reality</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#savings">Calculator</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section" id="contact">
+                    <h4>Contact</h4>
+                    <p>support@homesaver.com</p>
+                    <p>1-800-HOME-SAV</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Home Saver. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelector('.calculate-button').addEventListener('click', function() {
+            const targetPrice = parseFloat(document.getElementById('target-price').value);
+            const downPaymentPercent = parseFloat(document.getElementById('down-payment').value);
+            const monthlySavings = parseFloat(document.getElementById('monthly-savings').value);
+
+            const downPaymentAmount = targetPrice * (downPaymentPercent / 100);
+            const monthsToSave = Math.ceil(downPaymentAmount / monthlySavings);
+
+            document.getElementById('result-down-payment').textContent = '$' + downPaymentAmount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('result-months').textContent = monthsToSave + ' months (' + (monthsToSave / 12).toFixed(1) + ' years)';
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
