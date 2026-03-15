@@ -26,7 +26,7 @@
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
+  background: white;
   color: var(--text);
   min-height: 100vh;
 }
@@ -58,14 +58,30 @@ body::after {
 }
 
 .topnav {
-  padding: 28px 0 22px;
+  padding: 28px 28px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+
   margin-bottom: 36px;
-  border-bottom: 1px solid var(--border);
+
+  /* transparent background */
+  background: rgba(37, 57, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  border-bottom: 1px solid rgba(155, 236, 0, 0.12);
+
+  /* sticky */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  /* full width */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .logo {
@@ -73,16 +89,16 @@ body::after {
   font-size: 20px;
   font-weight: 900;
   letter-spacing: .02em;
-  color: var(--text);
+  color: whitesmoke;
   text-decoration: none;
 }
 
 .logo-accent {
-  color: var(--green);
+  color: black;
 }
 
 .logo-dash {
-  color: var(--gold);
+  color: grey;
   margin: 0 4px;
 }
 
@@ -98,9 +114,9 @@ body::after {
   gap: 6px;
   padding: 7px 16px;
   border-radius: 100px;
-  border: 1px solid var(--border2);
-  background: var(--surface2);
-  color: var(--muted2);
+  border: 1px solid white;
+  background: rgb(2, 57, 1);
+  color: whitesmoke;
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
@@ -110,9 +126,9 @@ body::after {
 }
 
 .nav-pill:hover {
-  color: var(--green);
-  border-color: var(--green);
-  background: var(--green-dim);
+  color: whitesmoke;
+  border-color: black;
+  background: grey;
 }
 
 .nav-pill.spinning svg {
@@ -133,7 +149,7 @@ body::after {
   font-size: 10px;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: #253900;
   display: block;
   margin-bottom: 10px;
 }
@@ -144,22 +160,23 @@ body::after {
   font-weight: 900;
   line-height: 1.1;
   letter-spacing: .01em;
+  color: goldenrod;
 }
 
 .page-title .t-green {
-  color: var(--green);
+  color: #253900;
 }
 
-.title-divider {
+/*.title-divider {
   width: 40px;
   height: 2px;
   background: linear-gradient(90deg, var(--gold), var(--green));
   border-radius: 2px;
   margin-top: 14px;
-}
+}*/
 
 .page-sub {
-  color: var(--muted);
+  color: grey;
   font-size: 14px;
   line-height: 1.65;
   margin-top: 12px;
@@ -169,8 +186,8 @@ body::after {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: whitesmoke;
+  border: 1px solid goldenrod;
   border-radius: 100px;
   padding: 5px;
   width: fit-content;
@@ -182,7 +199,7 @@ body::after {
   border-radius: 100px;
   border: none;
   background: transparent;
-  color: var(--muted);
+  color: #253900;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -197,8 +214,8 @@ body::after {
 }
 
 .f-btn.active {
-  background: var(--green);
-  color: var(--bg);
+  background: #253900;
+  color: white;
   box-shadow: 0 4px 18px rgba(155, 236, 0, .22);
 }
 
@@ -220,9 +237,9 @@ body::after {
 .stacked-chip {
   display: inline-flex;
   flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--r2);
+  background: whitesmoke;
+  border: 1px solid goldenrod;
+  border-radius: gold;
   overflow: hidden;
   min-width: 340px;
   position: relative;
@@ -235,7 +252,7 @@ body::after {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--green) 60%, transparent);
+  background: goldenrod;
   pointer-events: none;
 }
 
@@ -244,11 +261,11 @@ body::after {
   align-items: center;
   gap: 9px;
   padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid goldenrod;
 }
 
 .chip-search-icon {
-  color: var(--muted);
+  color: #253900;
   flex-shrink: 0;
 }
 
@@ -258,12 +275,12 @@ body::after {
   background: transparent;
   font-size: 13px;
   font-family: 'DM Sans', sans-serif;
-  color: var(--text);
+  color: #253900;
   outline: none;
 }
 
 .chip-search-input::placeholder {
-  color: var(--muted);
+  color: #253900;
 }
 
 .chip-nav-row {
@@ -276,21 +293,21 @@ body::after {
   height: 48px;
   border: none;
   background: transparent;
-  color: var(--muted2);
+  color: #253900;
   cursor: pointer;
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid goldenrod;
   transition: background .15s, color .15s;
   font-family: 'DM Sans', sans-serif;
 }
 
 .chip-nav-btn-right {
   border-right: none;
-  border-left: 1px solid var(--border);
+  border-left: 1px solid goldenrod;
 }
 
 .chip-nav-btn:hover {
@@ -312,7 +329,7 @@ body::after {
   font-family: 'Playfair Display', serif;
   font-size: 15px;
   font-weight: 700;
-  color: var(--text);
+  color: #253900;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -321,7 +338,7 @@ body::after {
 .chip-sub {
   font-size: 11px;
   font-family: 'DM Mono', monospace;
-  color: var(--muted);
+  color: #253900;
   margin-top: 3px;
 }
 
@@ -333,9 +350,9 @@ body::after {
   left: 0;
   right: 0;
   min-width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--r2);
+  background: whitesmoke;
+  border: 1px solid goldenrod;
+  border-radius: #253900;
   overflow: hidden;
   z-index: 50;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
@@ -348,7 +365,7 @@ body::after {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--green) 60%, transparent);
+  background: goldenrod, transparent;
 }
 
 .ac-dropdown.open {
@@ -371,11 +388,11 @@ body::after {
 
 .ac-item:hover,
 .ac-item.ac-active {
-  background: var(--green-dim);
+  background: goldenrod, transparent;
 }
 
 .ac-item.ac-active .ac-label {
-  color: var(--green);
+  color: #253900;
 }
 
 .ac-label {
@@ -391,7 +408,7 @@ body::after {
 
 .ac-label mark {
   background: transparent;
-  color: var(--green);
+  color: goldenrod;
   font-weight: 600;
 }
 
@@ -421,14 +438,15 @@ body::after {
 }
 
 .s-chip {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r2);
+  background: whitesmoke;
+  border: 1px solid goldenrod;
+  border-radius: white;
   padding: 14px 16px;
   display: flex;
   align-items: center;
   gap: 11px;
   transition: border-color .2s;
+  border-radius: 7%;
 }
 
 .s-chip:hover {
@@ -438,6 +456,7 @@ body::after {
 .s-chip-emoji {
   font-size: 22px;
   flex-shrink: 0;
+  color: var(--muted);
 }
 
 .s-chip-n {
@@ -445,12 +464,12 @@ body::after {
   font-size: 20px;
   font-weight: 700;
   line-height: 1;
-  color: var(--green);
+  color: #253900;
 }
 
 .s-chip-l {
   font-size: 10px;
-  color: var(--muted);
+  color: #253900;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: .06em;
