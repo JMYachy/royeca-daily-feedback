@@ -8,7 +8,7 @@ const DEPTS = [
   //ASS
   { id: "HRMU", label: "Human Resource Management Unit", icon: "👥" },
   { id: "PSU", label: "Property & Supply Unit", icon: "💻" },
-  { id: "PrU", label: "Procurement Unit", icon: "📈" },
+  { id: "PU", label: "Procurement Unit", icon: "📈" },
   { id: "SU", label: "Security Unit", icon: "📈" },
 
   //CD
@@ -27,7 +27,7 @@ const DEPTS = [
   { id: "MWU", label: "Medical Ward Unit", icon: "📈" },
   { id: "OBWU", label: "OB-Gyne Ward Unit", icon: "📈" },
   { id: "ORU", label: "Operating Room Unit", icon: "📈" },
-  { id: "PU", label: "Payward Unit", icon: "📈" },
+  { id: "PayU", label: "Payward Unit", icon: "📈" },
   { id: "PWU", label: "Pediatric Ward Unit", icon: "📈" },
   { id: "SWU", label: "Surgery Ward Unit", icon: "📈" },
 
@@ -551,9 +551,9 @@ window.exportToExcel = exportToExcel;
 // Reads globals: allReports, DEPTS
 // Requires: xlsx library (cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js)
 function exportToExcel() {
-  const btn     = document.getElementById('export-btn');
+  const btn = document.getElementById('export-btn');
   const reports = allReports || [];
-  const depts   = DEPTS      || [];
+  const depts = DEPTS || [];
 
   if (!reports.length) {
     alert('No data loaded yet — please wait for the page to finish loading, then try again.');
@@ -570,53 +570,54 @@ function exportToExcel() {
   btn.disabled = true;
 
   try {
-    const wb        = XLSX.utils.book_new();
-    const now       = new Date();
-    const dateStamp = now.toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
+    const wb = XLSX.utils.book_new();
+    const now = new Date();
+    const dateStamp = now.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const allData = [...reports];
 
-    const isEmp = r => String(r.role||'').toLowerCase().includes('employee');
-    const isCli = r => String(r.role||'').toLowerCase().includes('client');
+    const isEmp = r => String(r.role || '').toLowerCase().includes('employee');
+    const isCli = r => String(r.role || '').toLowerCase().includes('client');
 
     const styleHdr = {
-      font:      { bold:true, name:'Arial', sz:10, color:{ rgb:'FFFFFF' } },
-      fill:      { patternType:'solid', fgColor:{ rgb:'253900' } },
-      alignment: { horizontal:'center', vertical:'center', wrapText:true },
-      border:    { bottom:{ style:'thin', color:{ rgb:'9a7a1f' } } }
+      font: { bold: true, name: 'Arial', sz: 10, color: { rgb: 'FFFFFF' } },
+      fill: { patternType: 'solid', fgColor: { rgb: '253900' } },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: { bottom: { style: 'thin', color: { rgb: '9a7a1f' } } }
     };
     const styleTitle = {
-      font:      { bold:true, sz:13, name:'Arial', color:{ rgb:'253900' } },
-      alignment: { horizontal:'center', vertical:'center' }
+      font: { bold: true, sz: 13, name: 'Arial', color: { rgb: '253900' } },
+      alignment: { horizontal: 'center', vertical: 'center' }
     };
     const styleSub = {
-      font:      { sz:9, name:'Arial', italic:true, color:{ rgb:'6b7c5e' } },
-      alignment: { horizontal:'center' }
+      font: { sz: 9, name: 'Arial', italic: true, color: { rgb: '6b7c5e' } },
+      alignment: { horizontal: 'center' }
     };
-    const styleAlt  = { fill:{ patternType:'solid', fgColor:{ rgb:'F0F4EB' } } };
+    const styleAlt = { fill: { patternType: 'solid', fgColor: { rgb: 'F0F4EB' } } };
     const styleCell = (leftAlign, wrap) => ({
-      font:      { name:'Arial', sz:10 },
-      alignment: { horizontal: leftAlign?'left':'center', vertical:'center', wrapText:!!wrap }
+      font: { name: 'Arial', sz: 10 },
+      alignment: { horizontal: leftAlign ? 'left' : 'center', vertical: 'center', wrapText: !!wrap }
     });
 
-    const hdr  = ['#', 'Date & Time', 'Type', 'Score', 'Remarks'];
-    const cols = [{wch:5},{wch:22},{wch:11},{wch:7},{wch:54}];
+    const hdr = ['#', 'Date & Time', 'Type', 'Score', 'Remarks'];
+    const cols = [{ wch: 5 }, { wch: 22 }, { wch: 11 }, { wch: 7 }, { wch: 54 }];
 
-    const sortedDepts = [...depts].sort((a,b) => a.label.localeCompare(b.label));
+    const sortedDepts = [...depts].sort((a, b) => a.label.localeCompare(b.label));
 
     sortedDepts.forEach(dept => {
       const dRows = allData
-        .filter(r => String(r.branch_name||'').toLowerCase() === dept.id.toLowerCase())
-        .sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
+        .filter(r => String(r.branch_name || '').toLowerCase() === dept.id.toLowerCase())
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
       const sheetRows = dRows.map((r, i) => {
         const typeStr = isEmp(r) ? 'Employee' : isCli(r) ? 'Client' : (r.role || '—');
-        const dtStr   = r.created_at
-          ? new Date(r.created_at).toLocaleString('en-PH',{
-              year:'numeric', month:'short', day:'numeric',
-              hour:'2-digit', minute:'2-digit'})
+        const dtStr = r.created_at
+          ? new Date(r.created_at).toLocaleString('en-PH', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          })
           : '—';
-        return [i+1, dtStr, typeStr, Number(r.rating) || '—', r.remarks || r.comment || ''];
+        return [i + 1, dtStr, typeStr, Number(r.rating) || '—', r.remarks || r.comment || ''];
       });
 
       const ws = XLSX.utils.aoa_to_sheet([
@@ -626,26 +627,26 @@ function exportToExcel() {
         hdr,
         ...sheetRows
       ]);
-      ws['!cols']   = cols;
-      ws['!merges'] = [{s:{r:0,c:0},e:{r:0,c:4}},{s:{r:1,c:0},e:{r:1,c:4}}];
-      ws['!rows']   = [{hpt:26},{hpt:16},{hpt:6},{hpt:32}];
+      ws['!cols'] = cols;
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }];
+      ws['!rows'] = [{ hpt: 26 }, { hpt: 16 }, { hpt: 6 }, { hpt: 32 }];
       if (ws['A1']) ws['A1'].s = styleTitle;
       if (ws['A2']) ws['A2'].s = styleSub;
 
       // header row styles
-      for (let c=0; c<5; c++) {
-        const a = XLSX.utils.encode_cell({r:3, c});
+      for (let c = 0; c < 5; c++) {
+        const a = XLSX.utils.encode_cell({ r: 3, c });
         if (ws[a]) ws[a].s = styleHdr;
       }
       // data row styles
       sheetRows.forEach((_, i) => {
         const row = 4 + i;
-        for (let c=0; c<5; c++) {
-          const a = XLSX.utils.encode_cell({r:row, c});
+        for (let c = 0; c < 5; c++) {
+          const a = XLSX.utils.encode_cell({ r: row, c });
           if (!ws[a]) return;
           ws[a].s = {
-            ...(i%2===0 ? styleAlt : {}),
-            ...styleCell([1,2,4].includes(c), c===4)
+            ...(i % 2 === 0 ? styleAlt : {}),
+            ...styleCell([1, 2, 4].includes(c), c === 4)
           };
         }
       });
@@ -655,7 +656,7 @@ function exportToExcel() {
     });
 
     /* ── download ── */
-    XLSX.writeFile(wb, `DRJPRH_FullExport_AllDepts_${now.toISOString().slice(0,10)}.xlsx`);
+    XLSX.writeFile(wb, `DRJPRH_FullExport_AllDepts_${now.toISOString().slice(0, 10)}.xlsx`);
 
   } catch (err) {
     console.error('Export error:', err);

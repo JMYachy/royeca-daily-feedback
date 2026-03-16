@@ -18,7 +18,7 @@ const DEPTS = [
   { id: "DM", label: "Department of Medicine", icon: "📈" },
   { id: "DO", label: "Department of OB-GYNE", icon: "📈" },
   { id: "DP", label: "Department of Pediatrics", icon: "📈" },
-  { id: "DS", label: "Department of Surgery", icon: "📈" },
+  { id: "DoS", label: "Department of Surgery", icon: "📈" },
   { id: "RCRU", label: "Renal Care Respiratory Unit", icon: "📈" },
   { id: "RCU", label: "Rehabilitation Care Unit", icon: "📈" },
 
@@ -27,7 +27,7 @@ const DEPTS = [
   { id: "MWU", label: "Medical Ward Unit", icon: "📈" },
   { id: "OBWU", label: "OB-Gyne Ward Unit", icon: "📈" },
   { id: "ORU", label: "Operating Room Unit", icon: "📈" },
-  { id: "PU", label: "Payward Unit", icon: "📈" },
+  { id: "PayU", label: "Payward Unit", icon: "📈" },
   { id: "PWU", label: "Pediatric Ward Unit", icon: "📈" },
   { id: "SWU", label: "Surgery Ward Unit", icon: "📈" },
 
@@ -544,3 +544,130 @@ window.filterDepts = filterDepts;
 window.openAC = openAC;
 window.closeAC = closeAC;
 window.handleACKey = handleACKey;
+window.exportToExcel = exportToExcel;
+
+// ─── EXCEL EXPORT ─────────────────────────────────────────────────────────────
+// Save a Copy — exports ALL data from the database, sorted by department.
+// Reads globals: allReports, DEPTS
+// Requires: xlsx library (cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js)
+function exportToExcel() {
+  const btn = document.getElementById('export-btn');
+  const reports = allReports || [];
+  const depts = DEPTS || [];
+
+  if (!reports.length) {
+    alert('No data loaded yet — please wait for the page to finish loading, then try again.');
+    return;
+  }
+
+  btn.innerHTML = `
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
+         style="flex-shrink:0;animation:spin .7s linear infinite">
+      <path d="M11 6.5A4.5 4.5 0 112.5 4" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+      <path d="M2.5 1.5v2.5H5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Preparing…`;
+  btn.disabled = true;
+
+  try {
+    const wb = XLSX.utils.book_new();
+    const now = new Date();
+    const dateStamp = now.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const allData = [...reports];
+
+    const isEmp = r => String(r.role || '').toLowerCase().includes('employee');
+    const isCli = r => String(r.role || '').toLowerCase().includes('client');
+
+    const styleHdr = {
+      font: { bold: true, name: 'Arial', sz: 10, color: { rgb: 'FFFFFF' } },
+      fill: { patternType: 'solid', fgColor: { rgb: '253900' } },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: { bottom: { style: 'thin', color: { rgb: '9a7a1f' } } }
+    };
+    const styleTitle = {
+      font: { bold: true, sz: 13, name: 'Arial', color: { rgb: '253900' } },
+      alignment: { horizontal: 'center', vertical: 'center' }
+    };
+    const styleSub = {
+      font: { sz: 9, name: 'Arial', italic: true, color: { rgb: '6b7c5e' } },
+      alignment: { horizontal: 'center' }
+    };
+    const styleAlt = { fill: { patternType: 'solid', fgColor: { rgb: 'F0F4EB' } } };
+    const styleCell = (leftAlign, wrap) => ({
+      font: { name: 'Arial', sz: 10 },
+      alignment: { horizontal: leftAlign ? 'left' : 'center', vertical: 'center', wrapText: !!wrap }
+    });
+
+    const hdr = ['#', 'Date & Time', 'Type', 'Score', 'Remarks'];
+    const cols = [{ wch: 5 }, { wch: 22 }, { wch: 11 }, { wch: 7 }, { wch: 54 }];
+
+    const sortedDepts = [...depts].sort((a, b) => a.label.localeCompare(b.label));
+
+    sortedDepts.forEach(dept => {
+      const dRows = allData
+        .filter(r => String(r.branch_name || '').toLowerCase() === dept.id.toLowerCase())
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+      const sheetRows = dRows.map((r, i) => {
+        const typeStr = isEmp(r) ? 'Employee' : isCli(r) ? 'Client' : (r.role || '—');
+        const dtStr = r.created_at
+          ? new Date(r.created_at).toLocaleString('en-PH', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          })
+          : '—';
+        return [i + 1, dtStr, typeStr, Number(r.rating) || '—', r.remarks || r.comment || ''];
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet([
+        [`${dept.label}  (${dept.id})`],
+        [`All-time data   ·   Generated: ${dateStamp}   ·   ${dRows.length} record(s)`],
+        [],
+        hdr,
+        ...sheetRows
+      ]);
+      ws['!cols'] = cols;
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }];
+      ws['!rows'] = [{ hpt: 26 }, { hpt: 16 }, { hpt: 6 }, { hpt: 32 }];
+      if (ws['A1']) ws['A1'].s = styleTitle;
+      if (ws['A2']) ws['A2'].s = styleSub;
+
+      // header row styles
+      for (let c = 0; c < 5; c++) {
+        const a = XLSX.utils.encode_cell({ r: 3, c });
+        if (ws[a]) ws[a].s = styleHdr;
+      }
+      // data row styles
+      sheetRows.forEach((_, i) => {
+        const row = 4 + i;
+        for (let c = 0; c < 5; c++) {
+          const a = XLSX.utils.encode_cell({ r: row, c });
+          if (!ws[a]) return;
+          ws[a].s = {
+            ...(i % 2 === 0 ? styleAlt : {}),
+            ...styleCell([1, 2, 4].includes(c), c === 4)
+          };
+        }
+      });
+
+      const sheetName = dept.id.replace(/[:\\\/\?\*\[\]]/g, '').slice(0, 31);
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    });
+
+    /* ── download ── */
+    XLSX.writeFile(wb, `DRJPRH_FullExport_AllDepts_${now.toISOString().slice(0, 10)}.xlsx`);
+
+  } catch (err) {
+    console.error('Export error:', err);
+    alert('Export failed: ' + err.message);
+  } finally {
+    btn.innerHTML = `
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
+        <path d="M6.5 1.5v6M3.5 5l3 3 3-3M1.5 9.5v1a1 1 0 001 1h8a1 1 0 001-1v-1"
+          stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Save a Copy`;
+    btn.disabled = false;
+  }
+}
