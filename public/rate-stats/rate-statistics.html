@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="rate-statistics.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -24,8 +25,21 @@
         DRJPRH<span class="logo-dash">—</span><span class="logo-accent">Statistics</span>
       </a>
       <div class="nav-right">
-        <button class="nav-pill" id="refresh-btn" onclick="doRefresh()">Refresh</button>
-
+        <button class="nav-pill" id="refresh-btn" onclick="doRefresh()">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
+            <path d="M11 6.5A4.5 4.5 0 112.5 4" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
+            <path d="M2.5 1.5v2.5H5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          Refresh
+        </button>
+        <button class="nav-pill nav-pill-export" id="export-btn" onclick="exportToExcel()">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
+            <path d="M6.5 1.5v6M3.5 5l3 3 3-3M1.5 9.5v1a1 1 0 001 1h8a1 1 0 001-1v-1" stroke="currentColor"
+              stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Save a Copy
+        </button>
       </div>
     </nav>
 
@@ -35,7 +49,7 @@
       <div class="title-divider"></div>
       <p class="page-sub">
         Employee &amp; client feedback side by side, pulled from
-        <code style="color:#253900;font-family:'DM Mono',monospace;font-size:12px">from the feedbacks received</code>.
+        <code style="color:#253900;font-family:'DM Mono',monospace;font-size:12px">table_reports</code>.
         Taller bars = more submissions for that score.
       </p>
     </div>
@@ -81,6 +95,7 @@
   </div>
 
   <script src="rate-statistics.js"></script>
+
 </body>
 
 </html>
