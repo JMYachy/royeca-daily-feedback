@@ -233,6 +233,41 @@ function changeDept(dir) {
   render(true);
 }
 
+// ── Touch swipe helper ────────────────────────────────────────────────────────
+// Attaches left/right swipe to any element.
+// onSwipeLeft / onSwipeRight are callbacks.
+// minDist: minimum px to count as a swipe (default 40)
+// maxVertRatio: cancel if vertical movement is dominant (default 0.6)
+function addSwipe(el, onSwipeLeft, onSwipeRight, minDist = 40, maxVertRatio = 0.7) {
+  let sx = 0, sy = 0, active = false;
+
+  el.addEventListener("touchstart", e => {
+    if (e.touches.length !== 1) return;
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+    active = true;
+  }, { passive: true });
+
+  el.addEventListener("touchmove", e => {
+    if (!active || e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - sx;
+    const dy = e.touches[0].clientY - sy;
+    // If vertical scroll is dominant, cancel swipe recognition
+    if (Math.abs(dy) > Math.abs(dx) * maxVertRatio) { active = false; }
+  }, { passive: true });
+
+  el.addEventListener("touchend", e => {
+    if (!active) return;
+    active = false;
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) < minDist) return;             // too short
+    if (Math.abs(dy) > Math.abs(dx) * maxVertRatio) return; // too vertical
+    if (dx < 0) onSwipeLeft();
+    else onSwipeRight();
+  }, { passive: true });
+}
+
 function updateDeptChip() {
   const d = DEPTS[deptIdx];
   const nameEl = document.getElementById("d-name");
@@ -241,11 +276,22 @@ function updateDeptChip() {
   if (nameEl) nameEl.textContent = d.label;
   if (idxEl) idxEl.textContent = `${deptIdx + 1} of ${DEPTS.length} · ${d.id}`;
   if (s && !s.value) s.placeholder = "Search departments…";
+
   const chip = document.getElementById("dept-chip");
   if (!chip) return;
   chip.classList.remove("slide-r", "slide-l");
   void chip.offsetWidth;
   chip.classList.add(slideDir === "r" ? "slide-r" : "slide-l");
+
+  // Refresh swipe hint dots — show 5 dots, active one = current position bucket
+  const hint = document.getElementById("chip-swipe-hint");
+  if (hint) {
+    const DOT_COUNT = 5;
+    const bucket = Math.floor((deptIdx / DEPTS.length) * DOT_COUNT);
+    hint.innerHTML = Array.from({ length: DOT_COUNT }, (_, i) =>
+      `<span${i === bucket ? ' class="active"' : ""}></span>`
+    ).join("");
+  }
 }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
@@ -300,12 +346,20 @@ function buildPanels(emp, cli) {
 // Score filter colours
 const FC_HEX = ["#8b0000", "#c0430f", "#e07020", "#c9a800", "#a8b800", "#6e9e00", "#4a7c00", "#2d6e2d", "#1a5c1a", "#253900"];
 
-const ADC_PAGE_SIZE = 7;
+const ADC_PAGE_SIZE_DESKTOP = 7;
+const ADC_PAGE_SIZE_MOBILE = 4;
+
+function adcPageSize() {
+  return window.innerWidth <= 600 ? ADC_PAGE_SIZE_MOBILE : ADC_PAGE_SIZE_DESKTOP;
+}
+
 let adcScoreFilter = null;  // null = show all, 1-10 = filter to that score
 let adcPage = 0;     // current page index (0-based)
 let adcRoleView = "all"; // "all" | "emp" | "cli"
 
 function buildAllDeptsPanel() {
+  const isMobile = window.innerWidth <= 600;
+  const pageSize = adcPageSize();
   const inWindow = filterByPeriod(allReports);
 
   // Per-dept stats
@@ -342,10 +396,10 @@ function buildAllDeptsPanel() {
   }
 
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(visibleDepts.length / ADC_PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(visibleDepts.length / pageSize));
   const safePage = Math.min(adcPage, totalPages - 1);
   if (safePage !== adcPage) adcPage = safePage;
-  const pageDepts = visibleDepts.slice(adcPage * ADC_PAGE_SIZE, (adcPage + 1) * ADC_PAGE_SIZE);
+  const pageDepts = visibleDepts.slice(adcPage * pageSize, (adcPage + 1) * pageSize);
 
   // ── Build panel HTML ──────────────────────────────────────────────────────
   const panel = document.createElement("div");
@@ -399,6 +453,10 @@ function buildAllDeptsPanel() {
       ${pageHTML}
     </div>
     <div class="all-depts-chart" id="adc"></div>
+    <div class="adc-swipe-hint" id="adc-swipe-hint" aria-hidden="true">${Array.from({ length: totalPages }, (_, i) =>
+    `<span${i === adcPage ? ' class="active"' : ""}></span>`
+  ).join("")
+    }</div>
   `;
 
   // ── Event listeners ───────────────────────────────────────────────────────
@@ -465,7 +523,10 @@ function buildAllDeptsPanel() {
           </div>
           <div class="adc-emoji">${EMOJIS[si]}</div>
           <div class="adc-count" style="color:${FC_HEX[si]}">${count}×</div>
-          <div class="adc-label-full">${d.label}<span class="adc-id-tag">${d.id}</span></div>`;
+          ${isMobile
+            ? `<div class="adc-label-full adc-label-acronym">${d.id}</div>`
+            : `<div class="adc-label-full">${d.label}<span class="adc-id-tag">${d.id}</span></div>`
+          }`;
         chart.appendChild(col);
       });
     }
@@ -497,7 +558,10 @@ function buildAllDeptsPanel() {
           </div>
           <div class="adc-emoji">${emoji}</div>
           <div class="adc-count">${avgLabel}</div>
-          <div class="adc-label-full">${d.label}<span class="adc-id-tag">${d.id}</span></div>`;
+          ${isMobile
+            ? `<div class="adc-label-full adc-label-acronym">${d.id}</div>`
+            : `<div class="adc-label-full">${d.label}<span class="adc-id-tag">${d.id}</span></div>`
+          }`;
         chart.appendChild(col);
       });
     }
@@ -509,6 +573,15 @@ function buildAllDeptsPanel() {
       panel.querySelectorAll(".adc-bar-fill").forEach(b => { b.style.height = b.dataset.target || "0%"; });
     });
   });
+
+  // Swipe on the chart area → page through depts
+  const chartEl = panel.querySelector("#adc");
+  if (chartEl) {
+    addSwipe(chartEl,
+      () => { if (adcPage < totalPages - 1) { adcPage++; _rebuildPanel(panel); } },  // swipe left  → next page
+      () => { if (adcPage > 0) { adcPage--; _rebuildPanel(panel); } }   // swipe right → prev page
+    );
+  }
 
   return panel;
 }
@@ -575,6 +648,17 @@ function renderStatus(title, msg) {
 initSupabase();
 updateDeptChip();
 loadData();
+
+// Attach swipe to the dept chip once DOM is ready
+window.addEventListener("DOMContentLoaded", () => {
+  const chip = document.getElementById("dept-chip");
+  if (chip) {
+    addSwipe(chip,
+      () => changeDept(+1),   // swipe left  → next dept
+      () => changeDept(-1)    // swipe right → prev dept
+    );
+  }
+});
 
 window.doRefresh = doRefresh;
 window.setFilter = setFilter;
