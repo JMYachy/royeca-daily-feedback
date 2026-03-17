@@ -69,38 +69,25 @@ let deptIdx = 0;
 let period = "daily";
 let slideDir = "r";
 
+// ─── SUPABASE ────────────────────────────────────────────────────────────────
 function initSupabase() {
-  try {
-    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-    return true;
-  } catch (e) {
-    console.error("Supabase init error:", e);
-    return false;
-  }
+  try { sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON); return true; }
+  catch (e) { console.error("Supabase init error:", e); return false; }
 }
 
 async function loadData() {
   renderStatus("⏳ Loading…", "Fetching ratings from Supabase.");
-
   if (!sbClient && !initSupabase()) {
     renderStatus("⚠️ Supabase Error", "Supabase could not be initialized. Check your ANON key.");
     return;
   }
-
   const { data, error } = await sbClient
     .from("table_reports")
     .select("report_id, branch_name, role, rating, created_at")
     .order("report_id", { ascending: false });
-
-  if (error) {
-    console.error("Supabase query error:", error);
-    renderStatus("⚠️ Query Error", error.message);
-    return;
-  }
-
+  if (error) { console.error("Supabase query error:", error); renderStatus("⚠️ Query Error", error.message); return; }
   allReports = data || [];
   console.log(`Loaded ${allReports.length} report(s):`, allReports);
-
   render();
 }
 
@@ -111,6 +98,7 @@ async function doRefresh() {
   if (btn) btn.classList.remove("spinning");
 }
 
+// ─── FILTER BAR ──────────────────────────────────────────────────────────────
 function setFilter(p, btn) {
   period = p;
   document.querySelectorAll(".f-btn").forEach(b => b.classList.remove("active"));
@@ -118,6 +106,7 @@ function setFilter(p, btn) {
   render(false);
 }
 
+// ─── DATE HELPERS ────────────────────────────────────────────────────────────
 function parseDate(str) {
   if (!str) return new Date(0);
   const d = new Date(str);
@@ -127,11 +116,7 @@ function parseDate(str) {
 function windowStart(forPeriod) {
   const p = forPeriod || period;
   const now = new Date();
-  if (p === "daily") {
-    const d = new Date(now);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
+  if (p === "daily") { const d = new Date(now); d.setHours(0, 0, 0, 0); return d; }
   if (p === "monthly") return new Date(now.getFullYear(), now.getMonth(), 1);
   if (p === "yearly") return new Date(now.getFullYear(), 0, 1);
   return new Date(0);
@@ -142,6 +127,7 @@ function filterByPeriod(rows, forPeriod) {
   return rows.filter(r => parseDate(r.created_at).getTime() >= start);
 }
 
+// ─── DEPT AUTOCOMPLETE ───────────────────────────────────────────────────────
 let filteredDepts = DEPTS.slice();
 let acHighlight = 0;
 const AC_MAX = 8;
@@ -149,26 +135,22 @@ const AC_MAX = 8;
 function matchDepts(q) {
   if (!q) return DEPTS.slice();
   const lq = q.toLowerCase();
-  return DEPTS.filter(d =>
-    d.label.toLowerCase().includes(lq) || d.id.toLowerCase().includes(lq)
-  );
+  return DEPTS.filter(d => d.label.toLowerCase().includes(lq) || d.id.toLowerCase().includes(lq));
 }
 
 function highlightMatch(text, query) {
   if (!query) return text;
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
   if (idx === -1) return text;
-  return text.slice(0, idx)
-    + `<mark>${text.slice(idx, idx + query.length)}</mark>`
-    + text.slice(idx + query.length);
+  return text.slice(0, idx) + `<mark>${text.slice(idx, idx + query.length)}</mark>` + text.slice(idx + query.length);
 }
 
 function openAC() { }
 
 function closeAC() {
   document.getElementById("ac-dropdown").classList.remove("open");
-  const searchEl = document.getElementById("dept-search");
-  if (searchEl) searchEl.value = "";
+  const s = document.getElementById("dept-search");
+  if (s) s.value = "";
 }
 
 function renderAC(query) {
@@ -176,22 +158,14 @@ function renderAC(query) {
   const results = matchDepts(query);
   acHighlight = 0;
   drop.innerHTML = "";
-
-  if (results.length === 0) {
-    drop.innerHTML = `<div class="ac-more">No departments match "${query}"</div>`;
-    return;
-  }
-
+  if (results.length === 0) { drop.innerHTML = `<div class="ac-more">No departments match "${query}"</div>`; return; }
   results.slice(0, AC_MAX).forEach((d, i) => {
     const item = document.createElement("div");
     item.className = "ac-item" + (i === 0 ? " ac-active" : "");
-    item.innerHTML = `
-      <span class="ac-label">${highlightMatch(d.label, query)}</span>
-      <span class="ac-id">${d.id}</span>`;
+    item.innerHTML = `<span class="ac-label">${highlightMatch(d.label, query)}</span><span class="ac-id">${d.id}</span>`;
     item.onmousedown = () => selectFromAC(d);
     drop.appendChild(item);
   });
-
   if (results.length > AC_MAX) {
     const more = document.createElement("div");
     more.className = "ac-more";
@@ -213,25 +187,11 @@ function selectFromAC(dept) {
 function handleACKey(e) {
   const drop = document.getElementById("ac-dropdown");
   const items = drop.querySelectorAll(".ac-item");
-  if (!drop.classList.contains("open")) {
-    if (e.key === "ArrowDown" || e.key === "Enter") openAC();
-    return;
-  }
-  if (e.key === "ArrowDown") {
-    e.preventDefault();
-    acHighlight = Math.min(acHighlight + 1, items.length - 1);
-    items.forEach((el, i) => el.classList.toggle("ac-active", i === acHighlight));
-  } else if (e.key === "ArrowUp") {
-    e.preventDefault();
-    acHighlight = Math.max(acHighlight - 1, 0);
-    items.forEach((el, i) => el.classList.toggle("ac-active", i === acHighlight));
-  } else if (e.key === "Enter") {
-    e.preventDefault();
-    const active = drop.querySelector(".ac-item.ac-active");
-    if (active) active.onmousedown();
-  } else if (e.key === "Escape") {
-    closeAC();
-  }
+  if (!drop.classList.contains("open")) { if (e.key === "ArrowDown" || e.key === "Enter") openAC(); return; }
+  if (e.key === "ArrowDown") { e.preventDefault(); acHighlight = Math.min(acHighlight + 1, items.length - 1); items.forEach((el, i) => el.classList.toggle("ac-active", i === acHighlight)); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); acHighlight = Math.max(acHighlight - 1, 0); items.forEach((el, i) => el.classList.toggle("ac-active", i === acHighlight)); }
+  else if (e.key === "Enter") { e.preventDefault(); const a = drop.querySelector(".ac-item.ac-active"); if (a) a.onmousedown(); }
+  else if (e.key === "Escape") { closeAC(); }
 }
 
 function filterDepts(query) {
@@ -240,7 +200,6 @@ function filterDepts(query) {
   const drop = document.getElementById("ac-dropdown");
   const nameEl = document.getElementById("d-name");
   const idxEl = document.getElementById("d-idx");
-
   if (query) {
     renderAC(query);
     drop.classList.add("open");
@@ -262,8 +221,8 @@ function filterDepts(query) {
 
 function changeDept(dir) {
   slideDir = dir > 0 ? "r" : "l";
-  const searchEl = document.getElementById("dept-search");
-  if (searchEl) searchEl.value = "";
+  const s = document.getElementById("dept-search");
+  if (s) s.value = "";
   filteredDepts = DEPTS.slice();
   closeAC();
   deptIdx = (deptIdx + dir + DEPTS.length) % DEPTS.length;
@@ -275,12 +234,10 @@ function updateDeptChip() {
   const d = DEPTS[deptIdx];
   const nameEl = document.getElementById("d-name");
   const idxEl = document.getElementById("d-idx");
-  const searchEl = document.getElementById("dept-search");
-
+  const s = document.getElementById("dept-search");
   if (nameEl) nameEl.textContent = d.label;
   if (idxEl) idxEl.textContent = `${deptIdx + 1} of ${DEPTS.length} · ${d.id}`;
-  if (searchEl && !searchEl.value) searchEl.placeholder = "Search departments…";
-
+  if (s && !s.value) s.placeholder = "Search departments…";
   const chip = document.getElementById("dept-chip");
   if (!chip) return;
   chip.classList.remove("slide-r", "slide-l");
@@ -288,96 +245,52 @@ function updateDeptChip() {
   chip.classList.add(slideDir === "r" ? "slide-r" : "slide-l");
 }
 
+// ─── RENDER ──────────────────────────────────────────────────────────────────
 function render(slide = false) {
   const dept = DEPTS[deptIdx];
   const inWindow = filterByPeriod(allReports);
-
-  const forDept = inWindow.filter(r =>
-    String(r.branch_name || "").toLowerCase() === dept.id.toLowerCase()
-  );
-
-  const emp = forDept.filter(r =>
-    String(r.role || "").toLowerCase().includes(ROLE_EMP_KEYWORD)
-  );
-  const cli = forDept.filter(r =>
-    String(r.role || "").toLowerCase().includes(ROLE_CLI_KEYWORD)
-  );
-
+  const forDept = inWindow.filter(r => String(r.branch_name || "").toLowerCase() === dept.id.toLowerCase());
+  const emp = forDept.filter(r => String(r.role || "").toLowerCase().includes(ROLE_EMP_KEYWORD));
+  const cli = forDept.filter(r => String(r.role || "").toLowerCase().includes(ROLE_CLI_KEYWORD));
   console.log(`[${dept.id}] period=${period} | inWindow=${inWindow.length} | forDept=${forDept.length} | emp=${emp.length} | cli=${cli.length}`);
-
   const main = document.getElementById("main");
   if (!main) return;
-
-  if (slide) {
-    main.classList.remove("slide-r", "slide-l");
-    void main.offsetWidth;
-    main.classList.add(slideDir === "r" ? "slide-r" : "slide-l");
-  }
-
+  if (slide) { main.classList.remove("slide-r", "slide-l"); void main.offsetWidth; main.classList.add(slideDir === "r" ? "slide-r" : "slide-l"); }
   main.innerHTML = "";
   main.appendChild(buildStrip(emp, cli));
   main.appendChild(buildPanels(emp, cli));
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      document.querySelectorAll(".bar-fill").forEach(bar => {
-        bar.style.height = bar.dataset.target || "0%";
-      });
-    });
-  });
+  requestAnimationFrame(() => { requestAnimationFrame(() => { document.querySelectorAll(".bar-fill").forEach(bar => { bar.style.height = bar.dataset.target || "0%"; }); }); });
 }
 
 function buildStrip(emp, cli) {
   const all = [...emp, ...cli];
   const total = all.length;
-
   const avg = total ? (all.reduce((s, r) => s + Number(r.rating), 0) / total).toFixed(1) : "—";
   const eAvg = emp.length ? (emp.reduce((s, r) => s + Number(r.rating), 0) / emp.length).toFixed(1) : "—";
   const cAvg = cli.length ? (cli.reduce((s, r) => s + Number(r.rating), 0) / cli.length).toFixed(1) : "—";
-
   const freq = Array(10).fill(0);
   all.forEach(r => { const v = Number(r.rating); if (v >= 1 && v <= 10) freq[v - 1]++; });
   const domI = freq.indexOf(Math.max(...freq));
   const topLbl = freq[domI] > 0 ? `${domI + 1}/10 ${EMOJIS[domI]}` : "—";
-
   const strip = document.createElement("div");
   strip.className = "summary-strip fade-in";
-
-  [
-    { e: "📊", n: total || "0", l: "Total" },
-    { e: "⭐", n: avg, l: "Overall Avg" },
-    { e: "👤", n: eAvg, l: "Employee Avg" },
-    { e: "🤝", n: cAvg, l: "Client Avg" },
-    { e: "🏆", n: topLbl, l: "Top Score" },
-  ].forEach(c => {
-    const el = document.createElement("div");
-    el.className = "s-chip";
-    el.innerHTML = `
-      <span class="s-chip-emoji">${c.e}</span>
-      <div>
-        <div class="s-chip-n">${c.n}</div>
-        <div class="s-chip-l">${c.l}</div>
-      </div>`;
+  [{ e: "📊", n: total || "0", l: "Total" }, { e: "⭐", n: avg, l: "Overall Avg" }, { e: "👤", n: eAvg, l: "Employee Avg" }, { e: "🤝", n: cAvg, l: "Client Avg" }, { e: "🏆", n: topLbl, l: "Top Score" }].forEach(c => {
+    const el = document.createElement("div"); el.className = "s-chip";
+    el.innerHTML = `<span class="s-chip-emoji">${c.e}</span><div><div class="s-chip-n">${c.n}</div><div class="s-chip-l">${c.l}</div></div>`;
     strip.appendChild(el);
   });
-
   return strip;
 }
 
 function buildPanels(emp, cli) {
   const frag = document.createDocumentFragment();
-
-  const row = document.createElement("div");
-  row.className = "panels";
+  const row = document.createElement("div"); row.className = "panels";
   row.appendChild(buildPanel("emp", "👤 Employee", emp, "col-green"));
   row.appendChild(buildPanel("cli", "🤝 Client", cli, "col-gold"));
   frag.appendChild(row);
-
-  const ovrWrap = document.createElement("div");
-  ovrWrap.className = "panels-overall";
+  const ovrWrap = document.createElement("div"); ovrWrap.className = "panels-overall";
   ovrWrap.appendChild(buildPanel("ovr", "📊 Overall", [...emp, ...cli], ""));
   frag.appendChild(ovrWrap);
-
   return frag;
 }
 
@@ -386,61 +299,32 @@ function buildPanel(type, label, rows, numColorClass) {
   const avg = total ? (rows.reduce((s, r) => s + Number(r.rating), 0) / total).toFixed(1) : "—";
   const sorted = rows.map(r => Number(r.rating)).sort((a, b) => a - b);
   const median = sorted.length ? sorted[Math.floor(sorted.length / 2)] : "—";
-
   const freq = Array(10).fill(0);
   rows.forEach(r => { const v = Number(r.rating); if (v >= 1 && v <= 10) freq[v - 1]++; });
   const maxF = Math.max(...freq, 1);
   const domI = freq.indexOf(Math.max(...freq));
   const hasDom = freq[domI] > 0;
-
-  const panel = document.createElement("div");
-  panel.className = `panel ${type} fade-in`;
+  const panel = document.createElement("div"); panel.className = `panel ${type} fade-in`;
   panel.innerHTML = `
     <div class="panel-head">
-      <div class="panel-label">
-        <span class="label-dot dot-${type}"></span>
-        <span class="panel-label-text">${label}</span>
-      </div>
+      <div class="panel-label"><span class="label-dot dot-${type}"></span><span class="panel-label-text">${label}</span></div>
       <div class="mini-stats">
-        <div class="mini-stat">
-          <div class="mini-stat-n ${numColorClass}">${avg}</div>
-          <div class="mini-stat-l">Avg</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-n">${total}</div>
-          <div class="mini-stat-l">Total</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-n">${median}</div>
-          <div class="mini-stat-l">Median</div>
-        </div>
+        <div class="mini-stat"><div class="mini-stat-n ${numColorClass}">${avg}</div><div class="mini-stat-l">Avg</div></div>
+        <div class="mini-stat"><div class="mini-stat-n">${total}</div><div class="mini-stat-l">Total</div></div>
+        <div class="mini-stat"><div class="mini-stat-n">${median}</div><div class="mini-stat-l">Median</div></div>
       </div>
     </div>
     <div class="chart-area" id="ca-${type}"></div>
     <div class="dom-badge ${type}" id="db-${type}"></div>`;
-
   const ca = panel.querySelector(`#ca-${type}`);
-
-  if (total === 0) {
-    ca.innerHTML = `
-      <div class="chart-empty">
-        <span class="chart-empty-icon">📭</span>
-        No data for this period
-      </div>`;
-  } else {
+  if (total === 0) { ca.innerHTML = `<div class="chart-empty"><span class="chart-empty-icon">📭</span>No data for this period</div>`; }
+  else {
     freq.forEach((count, i) => {
-      const score = i + 1;
-      const pct = (count / maxF) * 100;
-      const isDom = (i === domI && count > 0);
-      const trackH = Math.max(pct, count > 0 ? 5 : 0);
-
-      const col = document.createElement("div");
-      col.className = "bar-col";
+      const score = i + 1, pct = (count / maxF) * 100, isDom = (i === domI && count > 0), trackH = Math.max(pct, count > 0 ? 5 : 0);
+      const col = document.createElement("div"); col.className = "bar-col";
       col.innerHTML = `
         <div class="bar-track" style="height:${trackH}%;background:rgba(155,236,0,0.05);">
-          <div class="bar-fill ${FC[i]}${isDom ? " dom" : ""}"
-               style="height:0%;"
-               data-target="${pct}%"></div>
+          <div class="bar-fill ${FC[i]}${isDom ? " dom" : ""}" style="height:0%;" data-target="${pct}%"></div>
           <div class="bar-tip">${count}× ${EMOJIS[i]} · ${score}/10</div>
         </div>
         <div class="bar-emoji">${EMOJIS[i]}</div>
@@ -448,24 +332,17 @@ function buildPanel(type, label, rows, numColorClass) {
       ca.appendChild(col);
     });
   }
-
   const db = panel.querySelector(`#db-${type}`);
   db.innerHTML = hasDom
-    ? `<span>${EMOJIS[domI]}</span>
-       <span>Most submitted: <strong>${domI + 1}/10</strong> — ${freq[domI]} time${freq[domI] !== 1 ? "s" : ""}</span>`
+    ? `<span>${EMOJIS[domI]}</span><span>Most submitted: <strong>${domI + 1}/10</strong> — ${freq[domI]} time${freq[domI] !== 1 ? "s" : ""}</span>`
     : `<span style="color:var(--muted);font-size:12px">No submissions for this period</span>`;
-
   return panel;
 }
 
 function renderStatus(title, msg) {
   const main = document.getElementById("main");
   if (!main) return;
-  main.innerHTML = `
-    <div class="status-box">
-      <h3>${title}</h3>
-      <p>${msg}</p>
-    </div>`;
+  main.innerHTML = `<div class="status-box"><h3>${title}</h3><p>${msg}</p></div>`;
 }
 
 initSupabase();
@@ -481,53 +358,50 @@ window.closeAC = closeAC;
 window.handleACKey = handleACKey;
 window.exportToExcel = exportToExcel;
 
-// ─── EXCEL EXPORT ─────────────────────────────────────────────────────────────
-// Exports data for the period chosen in the export-period-select dropdown
-// (defaults to the currently active dashboard period if the select is absent).
-// A "Period:" badge row is injected into every sheet so it's always clear
-// what time window the file represents.
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXCEL EXPORT
+// ─────────────────────────────────────────────────────────────────────────────
+// One sheet per department (same as before), each containing:
 //
-// Filename pattern:
-//   DRJPRH_Export_daily_2026-03-17.xlsx
-//   DRJPRH_Export_monthly_2026-03-17.xlsx
-//   DRJPRH_Export_yearly_2026-03-17.xlsx
-//   DRJPRH_Export_all_2026-03-17.xlsx
+//   [Title + subtitle]
 //
-// Add this HTML near your export button so the user can pick a period:
+//   ┌─ RATING TOTALS ──────────────────────────────────────────────────────┐
+//   │ Score │  TODAY        │  THIS MONTH   │  THIS YEAR    │             │
+//   │       │ Emp  Cli  All │ Emp  Cli  All │ Emp  Cli  All │             │
+//   │  1/10 │  …   …    …  │  …   …    …  │  …   …    …  │             │
+//   │  …                                                                   │
+//   │ TOTAL │  …   …    …  │  …   …    …  │  …   …    …  │             │
+//   │  AVG  │  …   …    …  │  …   …    …  │  …   …    …  │             │
+//   └──────────────────────────────────────────────────────────────────────┘
 //
-//   <select id="export-period-select">
-//     <option value="daily">Today</option>
-//     <option value="monthly">This Month</option>
-//     <option value="yearly">This Year</option>
-//     <option value="all">All-time</option>
-//   </select>
-//   <button id="export-btn" onclick="exportToExcel()">Save a Copy</button>
+//   [spacer]
 //
+//   Raw records table (period = #export-period-select or active dashboard period)
+//
+// ═══════════════════════════════════════════════════════════════════════════════
 function exportToExcel() {
   const btn = document.getElementById('export-btn');
   const depts = DEPTS || [];
 
-  // ── Determine which period to export ──────────────────────────────────────
-  // Priority: export-period-select value → active dashboard period → 'all'
-  const periodSelect = document.getElementById('export-period-select');
-  const exportPeriod = (periodSelect ? periodSelect.value : null) || period || 'all';
+  // Which period to show in the raw-records table
+  const sel = document.getElementById('export-period-select');
+  const exportPeriod = (sel ? sel.value : null) || period || 'all';
+  const PERIOD_LABEL = { daily: 'Today', monthly: 'This Month', yearly: 'This Year', all: 'All-time' };
+  const periodLabel = PERIOD_LABEL[exportPeriod] || 'All-time';
 
-  // Filter allReports to that window using the existing filterByPeriod helper.
-  // We pass the period explicitly so it never mutates the dashboard's global `period`.
-  const reports = exportPeriod === 'all'
-    ? (allReports || [])
-    : filterByPeriod(allReports || [], exportPeriod);
+  // Pre-filter the three fixed windows (always shown in the totals table)
+  const rowsD = filterByPeriod(allReports || [], 'daily');
+  const rowsM = filterByPeriod(allReports || [], 'monthly');
+  const rowsY = filterByPeriod(allReports || [], 'yearly');
+  const rowsA = allReports || [];
 
-  // Human-readable label used inside each sheet
-  const periodLabel = {
-    daily: 'Today',
-    monthly: 'This Month',
-    yearly: 'This Year',
-    all: 'All-time',
-  }[exportPeriod] || 'All-time';
+  const rowsForRaw = exportPeriod === 'all' ? rowsA
+    : exportPeriod === 'daily' ? rowsD
+      : exportPeriod === 'monthly' ? rowsM
+        : rowsY;
 
-  if (!reports.length) {
-    alert(`No data found for "${periodLabel}". Try a wider period or refresh first.`);
+  if (!rowsA.length) {
+    alert('No data loaded yet — please wait for the page to finish loading, then try again.');
     return;
   }
 
@@ -548,13 +422,7 @@ function exportToExcel() {
     const isEmp = r => String(r.role || '').toLowerCase().includes('employee');
     const isCli = r => String(r.role || '').toLowerCase().includes('client');
 
-    // ── Cell styles ──────────────────────────────────────────────────────────
-    const styleHdr = {
-      font: { bold: true, name: 'Arial', sz: 10, color: { rgb: 'FFFFFF' } },
-      fill: { patternType: 'solid', fgColor: { rgb: '253900' } },
-      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
-      border: { bottom: { style: 'thin', color: { rgb: '9a7a1f' } } }
-    };
+    // ── Styles ────────────────────────────────────────────────────────────
     const styleTitle = {
       font: { bold: true, sz: 13, name: 'Arial', color: { rgb: '253900' } },
       alignment: { horizontal: 'center', vertical: 'center' }
@@ -563,101 +431,285 @@ function exportToExcel() {
       font: { sz: 9, name: 'Arial', italic: true, color: { rgb: '6b7c5e' } },
       alignment: { horizontal: 'center' }
     };
-    // NEW: green-tinted badge that shows the period prominently
-    const stylePeriod = {
-      font: { sz: 9, name: 'Arial', bold: true, color: { rgb: '1a3d00' } },
-      fill: { patternType: 'solid', fgColor: { rgb: 'd4edaa' } },
-      alignment: { horizontal: 'center', vertical: 'center' },
-      border: {
-        top: { style: 'thin', color: { rgb: '7cb518' } },
-        bottom: { style: 'thin', color: { rgb: '7cb518' } }
-      }
+    // Period group header (Today / This Month / This Year)
+    const stylePeriodHdr = rgb => ({
+      font: { bold: true, sz: 9, name: 'Arial', color: { rgb: 'FFFFFF' } },
+      fill: { patternType: 'solid', fgColor: { rgb } },
+      alignment: { horizontal: 'center', vertical: 'center' }
+    });
+    // Column sub-header (Emp / Cli / All)
+    const styleColHdr = {
+      font: { bold: true, sz: 8, name: 'Arial', color: { rgb: 'FFFFFF' } },
+      fill: { patternType: 'solid', fgColor: { rgb: '253900' } },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: { bottom: { style: 'thin', color: { rgb: '9a7a1f' } } }
     };
-    const styleAlt = { fill: { patternType: 'solid', fgColor: { rgb: 'F0F4EB' } } };
-    const styleCell = (leftAlign, wrap) => ({
+    const styleScoreHdr = {  // "Score" label cell
+      font: { bold: true, sz: 9, name: 'Arial', color: { rgb: 'FFFFFF' } },
+      fill: { patternType: 'solid', fgColor: { rgb: '253900' } },
+      alignment: { horizontal: 'center', vertical: 'center' },
+      border: { bottom: { style: 'thin', color: { rgb: '9a7a1f' } } }
+    };
+    // Normal data cell
+    const styleData = alt => ({
+      font: { sz: 9, name: 'Arial' },
+      fill: alt ? { patternType: 'solid', fgColor: { rgb: 'f0f4eb' } } : {},
+      alignment: { horizontal: 'center', vertical: 'center' }
+    });
+    const styleDataL = alt => ({
+      font: { sz: 9, name: 'Arial' },
+      fill: alt ? { patternType: 'solid', fgColor: { rgb: 'f0f4eb' } } : {},
+      alignment: { horizontal: 'left', vertical: 'center' }
+    });
+    // Dominant score highlight (highest count in that period)
+    const styleDom = {
+      font: { bold: true, sz: 9, name: 'Arial', color: { rgb: '1a3d00' } },
+      fill: { patternType: 'solid', fgColor: { rgb: 'c8f06e' } },
+      alignment: { horizontal: 'center', vertical: 'center' }
+    };
+    // Totals / avg footer row
+    const styleTotals = {
+      font: { bold: true, sz: 9, name: 'Arial', color: { rgb: '253900' } },
+      fill: { patternType: 'solid', fgColor: { rgb: 'e8f5d0' } },
+      alignment: { horizontal: 'center', vertical: 'center' },
+      border: { top: { style: 'thin', color: { rgb: '7cb518' } } }
+    };
+    const styleTotalsL = { ...styleTotals, alignment: { horizontal: 'left', vertical: 'center' }, border: { top: { style: 'thin', color: { rgb: '7cb518' } } } };
+    // Raw records table
+    const styleRawHdr = {
+      font: { bold: true, name: 'Arial', sz: 10, color: { rgb: 'FFFFFF' } },
+      fill: { patternType: 'solid', fgColor: { rgb: '253900' } },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: { bottom: { style: 'thin', color: { rgb: '9a7a1f' } } }
+    };
+    const styleRawAlt = { fill: { patternType: 'solid', fgColor: { rgb: 'F0F4EB' } } };
+    const styleRawCell = (left, wrap) => ({
       font: { name: 'Arial', sz: 10 },
-      alignment: { horizontal: leftAlign ? 'left' : 'center', vertical: 'center', wrapText: !!wrap }
+      alignment: { horizontal: left ? 'left' : 'center', vertical: 'center', wrapText: !!wrap }
     });
 
-    const hdr = ['#', 'Date & Time', 'Type', 'Score', 'Remarks'];
-    const cols = [{ wch: 5 }, { wch: 22 }, { wch: 11 }, { wch: 7 }, { wch: 54 }];
+    // ── Helpers ───────────────────────────────────────────────────────────
+    function setCell(ws, r, c, v, s) {
+      const addr = XLSX.utils.encode_cell({ r, c });
+      ws[addr] = { v, t: typeof v === 'number' ? 'n' : 's' };
+      if (s) ws[addr].s = s;
+      const ref = ws['!ref'] ? XLSX.utils.decode_range(ws['!ref']) : { s: { r: 0, c: 0 }, e: { r: 0, c: 0 } };
+      if (r > ref.e.r) ref.e.r = r;
+      if (c > ref.e.c) ref.e.c = c;
+      ws['!ref'] = XLSX.utils.encode_range(ref);
+    }
+    function addMerge(ws, r1, c1, r2, c2) {
+      if (!ws['!merges']) ws['!merges'] = [];
+      ws['!merges'].push({ s: { r: r1, c: c1 }, e: { r: r2, c: c2 } });
+    }
+    function ratingFreq(rows) {
+      const f = Array(10).fill(0);
+      rows.forEach(r => { const v = Number(r.rating); if (v >= 1 && v <= 10) f[v - 1]++; });
+      return f;
+    }
+    function avgOf(rows) {
+      return rows.length
+        ? (rows.reduce((s, r) => s + Number(r.rating), 0) / rows.length).toFixed(2)
+        : '—';
+    }
+
+    // ── Column layout for rating-totals table ─────────────────────────────
+    // A(0)   = Score label
+    // B(1)   = Daily-Emp    C(2) = Daily-Cli    D(3) = Daily-All
+    // E(4)   = [spacer]
+    // F(5)   = Monthly-Emp  G(6) = Monthly-Cli  H(7) = Monthly-All
+    // I(8)   = [spacer]
+    // J(9)   = Yearly-Emp   K(10)= Yearly-Cli   L(11)= Yearly-All
+    // Total columns used: 12  (indices 0-11)
 
     const sortedDepts = [...depts].sort((a, b) => a.label.localeCompare(b.label));
 
     sortedDepts.forEach(dept => {
-      const dRows = reports
-        .filter(r => String(r.branch_name || '').toLowerCase() === dept.id.toLowerCase())
+      const dId = dept.id.toLowerCase();
+
+      // Dept-specific rows for each period
+      const dD = rowsD.filter(r => String(r.branch_name || '').toLowerCase() === dId);
+      const dM = rowsM.filter(r => String(r.branch_name || '').toLowerCase() === dId);
+      const dY = rowsY.filter(r => String(r.branch_name || '').toLowerCase() === dId);
+
+      // Raw records for the chosen period
+      const rawRows = rowsForRaw
+        .filter(r => String(r.branch_name || '').toLowerCase() === dId)
         .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
-      const sheetRows = dRows.map((r, i) => {
-        const typeStr = isEmp(r) ? 'Employee' : isCli(r) ? 'Client' : (r.role || '—');
-        const dtStr = r.created_at
-          ? new Date(r.created_at).toLocaleString('en-PH', {
-            year: 'numeric', month: 'short', day: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-          })
-          : '—';
-        return [i + 1, dtStr, typeStr, Number(r.rating) || '—', r.remarks || r.comment || ''];
+      const ws = {};
+      ws['!ref'] = 'A1:A1';
+      ws['!rows'] = [];
+      ws['!cols'] = [
+        { wch: 20 },             // A  Score
+        { wch: 7 }, { wch: 7 }, { wch: 7 }, // B-D Daily
+        { wch: 2 },             // E  spacer
+        { wch: 7 }, { wch: 7 }, { wch: 7 }, // F-H Monthly
+        { wch: 2 },             // I  spacer
+        { wch: 7 }, { wch: 7 }, { wch: 7 }, // J-L Yearly
+      ];
+
+      let row = 0;
+
+      // ── Title ──────────────────────────────────────────────────────────
+      for (let c = 0; c < 12; c++) setCell(ws, row, c, c === 0 ? `${dept.label}  (${dept.id})` : '', styleTitle);
+      addMerge(ws, row, 0, row, 11);
+      ws['!rows'][row] = { hpt: 26 }; row++;
+
+      for (let c = 0; c < 12; c++) setCell(ws, row, c, c === 0 ? `Generated: ${dateStamp}   ·   Records in raw table: ${rawRows.length}` : '', styleSub);
+      addMerge(ws, row, 0, row, 11);
+      ws['!rows'][row] = { hpt: 14 }; row++;
+
+      ws['!rows'][row] = { hpt: 8 }; row++; // spacer
+
+      // ── Rating Totals Table ────────────────────────────────────────────
+
+      // Row A: Period group headers (merged over their 3 sub-cols)
+      setCell(ws, row, 0, '', styleScoreHdr); // blank corner
+      for (let c = 1; c <= 3; c++) setCell(ws, row, c, 'TODAY', stylePeriodHdr('2e7d32'));
+      setCell(ws, row, 4, '', styleData(false));
+      for (let c = 5; c <= 7; c++) setCell(ws, row, c, 'THIS MONTH', stylePeriodHdr('1565c0'));
+      setCell(ws, row, 8, '', styleData(false));
+      for (let c = 9; c <= 11; c++) setCell(ws, row, c, 'THIS YEAR', stylePeriodHdr('6a1e76'));
+      addMerge(ws, row, 1, row, 3);
+      addMerge(ws, row, 5, row, 7);
+      addMerge(ws, row, 9, row, 11);
+      ws['!rows'][row] = { hpt: 20 }; row++;
+
+      // Row B: Column sub-headers (Score | Emp Cli All | spacer | Emp Cli All | spacer | Emp Cli All)
+      setCell(ws, row, 0, 'Score', styleScoreHdr);
+      ['Emp', 'Cli', 'All', '', 'Emp', 'Cli', 'All', '', 'Emp', 'Cli', 'All'].forEach((h, i) => {
+        setCell(ws, row, i + 1, h, h === '' ? styleData(false) : styleColHdr);
       });
+      ws['!rows'][row] = { hpt: 20 }; row++;
 
-      // Sheet layout (row indices, 0-based):
-      //  0 — Title  (dept name + id)
-      //  1 — Sub    (generated date + record count)
-      //  2 — Period badge  ← NEW
-      //  3 — blank spacer
-      //  4 — Column headers
-      //  5+ — Data rows
-      const ws = XLSX.utils.aoa_to_sheet([
-        [`${dept.label}  (${dept.id})`],
-        [`Generated: ${dateStamp}   ·   ${dRows.length} record(s)`],
-        [`Period: ${periodLabel}`],
-        [],
-        hdr,
-        ...sheetRows
-      ]);
+      // Compute freq arrays
+      const fDE = ratingFreq(dD.filter(isEmp)), fDC = ratingFreq(dD.filter(isCli)), fDA = ratingFreq(dD);
+      const fME = ratingFreq(dM.filter(isEmp)), fMC = ratingFreq(dM.filter(isCli)), fMA = ratingFreq(dM);
+      const fYE = ratingFreq(dY.filter(isEmp)), fYC = ratingFreq(dY.filter(isCli)), fYA = ratingFreq(dY);
 
-      ws['!cols'] = cols;
-      ws['!merges'] = [
-        { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
-        { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } },
-        { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } }, // merge period row
-      ];
-      ws['!rows'] = [
-        { hpt: 26 }, // title
-        { hpt: 14 }, // subtitle
-        { hpt: 18 }, // period badge
-        { hpt: 6 }, // spacer
-        { hpt: 32 }, // header
-      ];
+      // Dominant index per period (score with highest combined count)
+      const domD = fDA.indexOf(Math.max(...fDA));
+      const domM = fMA.indexOf(Math.max(...fMA));
+      const domY = fYA.indexOf(Math.max(...fYA));
 
-      if (ws['A1']) ws['A1'].s = styleTitle;
-      if (ws['A2']) ws['A2'].s = styleSub;
-      if (ws['A3']) ws['A3'].s = stylePeriod; // ← apply period badge style
+      // Rows C-L: one row per score 1-10
+      for (let i = 0; i < 10; i++) {
+        const alt = i % 2 === 0;
+        const isDomD = fDA[i] > 0 && i === domD;
+        const isDomM = fMA[i] > 0 && i === domM;
+        const isDomY = fYA[i] > 0 && i === domY;
 
-      // Column header row is at index 4
-      for (let c = 0; c < 5; c++) {
-        const a = XLSX.utils.encode_cell({ r: 4, c });
-        if (ws[a]) ws[a].s = styleHdr;
+        setCell(ws, row, 0, `${i + 1}/10  ${EMOJIS[i]}`, styleDataL(alt));
+
+        setCell(ws, row, 1, fDE[i], isDomD ? styleDom : styleData(alt));
+        setCell(ws, row, 2, fDC[i], isDomD ? styleDom : styleData(alt));
+        setCell(ws, row, 3, fDA[i], isDomD ? styleDom : styleData(alt));
+
+        setCell(ws, row, 4, '', styleData(alt)); // spacer
+
+        setCell(ws, row, 5, fME[i], isDomM ? styleDom : styleData(alt));
+        setCell(ws, row, 6, fMC[i], isDomM ? styleDom : styleData(alt));
+        setCell(ws, row, 7, fMA[i], isDomM ? styleDom : styleData(alt));
+
+        setCell(ws, row, 8, '', styleData(alt)); // spacer
+
+        setCell(ws, row, 9, fYE[i], isDomY ? styleDom : styleData(alt));
+        setCell(ws, row, 10, fYC[i], isDomY ? styleDom : styleData(alt));
+        setCell(ws, row, 11, fYA[i], isDomY ? styleDom : styleData(alt));
+
+        ws['!rows'][row] = { hpt: 16 }; row++;
       }
 
-      // Data rows start at index 5
-      sheetRows.forEach((_, i) => {
-        const row = 5 + i;
-        for (let c = 0; c < 5; c++) {
-          const a = XLSX.utils.encode_cell({ r: row, c });
-          if (!ws[a]) return;
-          ws[a].s = {
-            ...(i % 2 === 0 ? styleAlt : {}),
-            ...styleCell([1, 2, 4].includes(c), c === 4)
-          };
-        }
-      });
+      // TOTAL row
+      const tDE = dD.filter(isEmp).length, tDC = dD.filter(isCli).length;
+      const tME = dM.filter(isEmp).length, tMC = dM.filter(isCli).length;
+      const tYE = dY.filter(isEmp).length, tYC = dY.filter(isCli).length;
+
+      setCell(ws, row, 0, 'TOTAL', styleTotalsL);
+      setCell(ws, row, 1, tDE, styleTotals);
+      setCell(ws, row, 2, tDC, styleTotals);
+      setCell(ws, row, 3, tDE + tDC, styleTotals);
+      setCell(ws, row, 4, '', styleTotals);
+      setCell(ws, row, 5, tME, styleTotals);
+      setCell(ws, row, 6, tMC, styleTotals);
+      setCell(ws, row, 7, tME + tMC, styleTotals);
+      setCell(ws, row, 8, '', styleTotals);
+      setCell(ws, row, 9, tYE, styleTotals);
+      setCell(ws, row, 10, tYC, styleTotals);
+      setCell(ws, row, 11, tYE + tYC, styleTotals);
+      ws['!rows'][row] = { hpt: 18 }; row++;
+
+      // AVG SCORE row
+      setCell(ws, row, 0, 'AVG SCORE', styleTotalsL);
+      setCell(ws, row, 1, avgOf(dD.filter(isEmp)), styleTotals);
+      setCell(ws, row, 2, avgOf(dD.filter(isCli)), styleTotals);
+      setCell(ws, row, 3, avgOf(dD), styleTotals);
+      setCell(ws, row, 4, '', styleTotals);
+      setCell(ws, row, 5, avgOf(dM.filter(isEmp)), styleTotals);
+      setCell(ws, row, 6, avgOf(dM.filter(isCli)), styleTotals);
+      setCell(ws, row, 7, avgOf(dM), styleTotals);
+      setCell(ws, row, 8, '', styleTotals);
+      setCell(ws, row, 9, avgOf(dY.filter(isEmp)), styleTotals);
+      setCell(ws, row, 10, avgOf(dY.filter(isCli)), styleTotals);
+      setCell(ws, row, 11, avgOf(dY), styleTotals);
+      ws['!rows'][row] = { hpt: 18 }; row++;
+
+      // ── Spacer ─────────────────────────────────────────────────────────
+      ws['!rows'][row] = { hpt: 10 }; row++;
+
+      // ── Raw Records Table ──────────────────────────────────────────────
+      // Widen remarks column (col 3 maps to raw table's 4th col, which is D=index 3 in raw's own 5-col layout)
+      // Raw table uses cols 0-4; we reset col widths to suit
+      ws['!cols'] = [
+        { wch: 5 }, // #
+        { wch: 22 }, // Date & Time
+        { wch: 11 }, // Type
+        { wch: 7 }, // Score
+        { wch: 54 }, // Remarks
+      ];
+
+      // Section label
+      for (let c = 0; c < 5; c++) {
+        setCell(ws, row, c, c === 0
+          ? `Records — ${periodLabel}  (${rawRows.length} record${rawRows.length !== 1 ? 's' : ''})`
+          : '', {
+          font: { bold: true, sz: 10, name: 'Arial', color: { rgb: 'FFFFFF' } },
+          fill: { patternType: 'solid', fgColor: { rgb: '37474f' } },
+          alignment: { horizontal: c === 0 ? 'left' : 'center', vertical: 'center' }
+        });
+      }
+      addMerge(ws, row, 0, row, 4);
+      ws['!rows'][row] = { hpt: 20 }; row++;
+
+      // Column headers
+      ['#', 'Date & Time', 'Type', 'Score', 'Remarks'].forEach((h, c) => setCell(ws, row, c, h, styleRawHdr));
+      ws['!rows'][row] = { hpt: 28 }; row++;
+
+      if (!rawRows.length) {
+        for (let c = 0; c < 5; c++) setCell(ws, row, c, c === 0 ? 'No records for this period.' : '', styleSub);
+        addMerge(ws, row, 0, row, 4);
+        ws['!rows'][row] = { hpt: 16 }; row++;
+      } else {
+        rawRows.forEach((r, i) => {
+          const typeStr = isEmp(r) ? 'Employee' : isCli(r) ? 'Client' : (r.role || '—');
+          const dtStr = r.created_at
+            ? new Date(r.created_at).toLocaleString('en-PH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            : '—';
+          const alt = i % 2 === 0;
+          setCell(ws, row, 0, i + 1, { ...styleRawCell(false, false), ...(alt ? styleRawAlt : {}) });
+          setCell(ws, row, 1, dtStr, { ...styleRawCell(false, false), ...(alt ? styleRawAlt : {}) });
+          setCell(ws, row, 2, typeStr, { ...styleRawCell(false, false), ...(alt ? styleRawAlt : {}) });
+          setCell(ws, row, 3, Number(r.rating) || 0, { ...styleRawCell(false, false), ...(alt ? styleRawAlt : {}) });
+          setCell(ws, row, 4, r.remarks || r.comment || '', { ...styleRawCell(true, true), ...(alt ? styleRawAlt : {}) });
+          ws['!rows'][row] = { hpt: 16 }; row++;
+        });
+      }
 
       const sheetName = dept.id.replace(/[:\\\/\?\*\[\]]/g, '').slice(0, 31);
       XLSX.utils.book_append_sheet(wb, ws, sheetName);
     });
 
-    // Filename includes the chosen period for instant clarity
     XLSX.writeFile(wb, `DRJPRH_Export_${exportPeriod}_${now.toISOString().slice(0, 10)}.xlsx`);
 
   } catch (err) {
@@ -672,4 +724,4 @@ function exportToExcel() {
       Save a Copy`;
     btn.disabled = false;
   }
-} is
+}
