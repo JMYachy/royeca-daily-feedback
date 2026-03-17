@@ -1,17 +1,11 @@
 const SUPABASE_URL = 'https://qjsvsfrqfnrwzdxtrebb.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg'; // ← paste your anon key here
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqc3ZzZnJxZm5yd3pkeHRyZWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ4MzgsImV4cCI6MjA4ODY2MDgzOH0.elMyC9DBlbqkMyojlus019irQwgHI4ma3IklyAOM1vg';
 
-// ─── DEPARTMENTS ──────────────────────────────────────────────────────────────
-// 'id' must EXACTLY match the branch_name values stored in your Supabase table.
-// Your sample data uses 'Admin' (capital A), so it's listed here as 'Admin'.
 const DEPTS = [
-  //ASS
   { id: "HRMU", label: "Human Resource Management Unit", icon: "👥" },
   { id: "PSU", label: "Property & Supply Unit", icon: "💻" },
   { id: "PU", label: "Procurement Unit", icon: "📈" },
   { id: "SU", label: "Security Unit", icon: "📈" },
-
-  //CD
   { id: "APU", label: "Acute Psychiatry Unit", icon: "📈" },
   { id: "CPU", label: "Child Protection Unit", icon: "📈" },
   { id: "DA", label: "Department of Anesthesia", icon: "📈" },
@@ -21,8 +15,6 @@ const DEPTS = [
   { id: "DoS", label: "Department of Surgery", icon: "📈" },
   { id: "RCRU", label: "Renal Care Respiratory Unit", icon: "📈" },
   { id: "RCU", label: "Rehabilitation Care Unit", icon: "📈" },
-
-  //CNAS
   { id: "DRLRU", label: "Delivery Room & Labor Room Unit", icon: "📈" },
   { id: "MWU", label: "Medical Ward Unit", icon: "📈" },
   { id: "OBWU", label: "OB-Gyne Ward Unit", icon: "📈" },
@@ -30,54 +22,24 @@ const DEPTS = [
   { id: "PayU", label: "Payward Unit", icon: "📈" },
   { id: "PWU", label: "Pediatric Ward Unit", icon: "📈" },
   { id: "SWU", label: "Surgery Ward Unit", icon: "📈" },
-
-  //DPS
   { id: "ACLU", label: "Anatomic & Clinical Laboratory Unit", icon: "📈" },
   { id: "BBU", label: "Blood Bank Unit", icon: "📈" },
-
-  //DS
   { id: "DS", label: "Dental Section", icon: "📈" },
-
-  //EFMS
   { id: "HKLU", label: "House Keeping & Laundry Unit", icon: "📈" },
   { id: "JOMU", label: "Janitorial/Orderlies Management Unit", icon: "📈" },
   { id: "MMU", label: "Materials Management Unit", icon: "📈" },
-
-  //EMD
   { id: "EMD", label: "Emergency Medicine Department", icon: "📈" },
-
-  //FMSS
   { id: "ABCU", label: "Accounting, Billing & Claims Unit", icon: "📈" },
   { id: "COU", label: "Cash Operations Unit", icon: "📈" },
-
-  //HIMS
   { id: "HIMS", label: "Health Information Management Section", icon: "📈" },
-
-  //IHOMPU
   { id: "IHOMPU", label: "Integrated Hospital Operations & Management Program Unit", icon: "📈" },
-
-  //MSW
   { id: "MSW", label: "Medical Social Work", icon: "📈" },
-
-  //NDS
   { id: "NDS", label: "Nutrition & Dietetics Section", icon: "📈" },
-
-  //NSOO
   { id: "NSOO", label: "NSO Office", icon: "📈" },
-
-  //ODFM
   { id: "ODFM", label: "Outpatient Department/Family Medicine", icon: "📈" },
-
-  //PS
   { id: "PS", label: "Pharmacy Section", icon: "📈" },
-
-  //QAS
   { id: "QAS", label: "Quality Assurance Section", icon: "📈" },
-
-  //RDS
   { id: "RDS", label: "Radiology & Diagnostic Section", icon: "📈" },
-
-  //SCA
   { id: "AMSU", label: "Anti-Microbial Stewardship Unit", icon: "📈" },
   { id: "CTU", label: "Center for Teens Unit", icon: "📈" },
   { id: "HACU", label: "HIV & AIDS Core Unit", icon: "📈" },
@@ -87,23 +49,14 @@ const DEPTS = [
   { id: "RHFPU", label: "Reproductive Health & Family Planning Unit", icon: "📈" },
   { id: "TBDU", label: "TB-Dots Unit", icon: "📈" },
   { id: "WCAK", label: "Wellness Center APE & Konsulta", icon: "📈" },
-
-  //SCAS
   { id: "CSRSU", label: "Central Supply Room & Sterilization Unit", icon: "📈" },
   { id: "ICU", label: "Intensive Care Unit", icon: "📈" },
   { id: "IPCU", label: "Infection Prevention & Control Unit", icon: "📈" },
   { id: "NICU", label: "Neonatal Intensive Care Unit", icon: "📈" },
   { id: "PACU", label: "Post Anesthesia Care Unit", icon: "📈" },
   { id: "PRU", label: "Pulmonary/Respiratory Unit", icon: "📈" },
-
 ];
 
-// ─── ROLE KEYWORDS ────────────────────────────────────────────────────────────
-// Your sample data uses role = 'Admin/Clients'.
-// The employee panel catches rows whose role contains "employee" (case-insensitive).
-// The client panel catches rows whose role contains "client" (case-insensitive).
-// 'Admin/Clients' → contains "client" → goes into the Client panel. ✓
-// If you also have rows like 'Admin/Employees', those will hit the Employee panel.
 const ROLE_EMP_KEYWORD = "employee";
 const ROLE_CLI_KEYWORD = "client";
 
@@ -116,7 +69,6 @@ let deptIdx = 0;
 let period = "daily";
 let slideDir = "r";
 
-// ─── SUPABASE INIT ────────────────────────────────────────────────────────────
 function initSupabase() {
   try {
     sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -127,7 +79,6 @@ function initSupabase() {
   }
 }
 
-// ─── DATA LOAD ────────────────────────────────────────────────────────────────
 async function loadData() {
   renderStatus("⏳ Loading…", "Fetching ratings from Supabase.");
 
@@ -160,7 +111,6 @@ async function doRefresh() {
   if (btn) btn.classList.remove("spinning");
 }
 
-// ─── FILTER BAR ───────────────────────────────────────────────────────────────
 function setFilter(p, btn) {
   period = p;
   document.querySelectorAll(".f-btn").forEach(b => b.classList.remove("active"));
@@ -168,31 +118,30 @@ function setFilter(p, btn) {
   render(false);
 }
 
-// ─── DATE HELPERS ─────────────────────────────────────────────────────────────
 function parseDate(str) {
   if (!str) return new Date(0);
   const d = new Date(str);
   return isNaN(d.getTime()) ? new Date(0) : d;
 }
 
-function windowStart() {
+function windowStart(forPeriod) {
+  const p = forPeriod || period;
   const now = new Date();
-  if (period === "daily") {
+  if (p === "daily") {
     const d = new Date(now);
     d.setHours(0, 0, 0, 0);
     return d;
   }
-  if (period === "monthly") return new Date(now.getFullYear(), now.getMonth(), 1);
-  if (period === "yearly") return new Date(now.getFullYear(), 0, 1);
+  if (p === "monthly") return new Date(now.getFullYear(), now.getMonth(), 1);
+  if (p === "yearly") return new Date(now.getFullYear(), 0, 1);
   return new Date(0);
 }
 
-function filterByPeriod(rows) {
-  const start = windowStart().getTime();
+function filterByPeriod(rows, forPeriod) {
+  const start = windowStart(forPeriod).getTime();
   return rows.filter(r => parseDate(r.created_at).getTime() >= start);
 }
 
-// ─── DEPT SWITCHER ────────────────────────────────────────────────────────────
 let filteredDepts = DEPTS.slice();
 let acHighlight = 0;
 const AC_MAX = 8;
@@ -214,10 +163,7 @@ function highlightMatch(text, query) {
     + text.slice(idx + query.length);
 }
 
-// ── Autocomplete open/close ──
-function openAC() {
-  // intentionally disabled — dropdown only opens when typing
-}
+function openAC() { }
 
 function closeAC() {
   document.getElementById("ac-dropdown").classList.remove("open");
@@ -264,7 +210,6 @@ function selectFromAC(dept) {
   render(true);
 }
 
-// ── Keyboard nav in dropdown ──
 function handleACKey(e) {
   const drop = document.getElementById("ac-dropdown");
   const items = drop.querySelectorAll(".ac-item");
@@ -289,7 +234,6 @@ function handleACKey(e) {
   }
 }
 
-// ── Filter as user types ──
 function filterDepts(query) {
   filteredDepts = matchDepts(query);
   acHighlight = 0;
@@ -316,7 +260,6 @@ function filterDepts(query) {
   }
 }
 
-// ── Arrow buttons ──
 function changeDept(dir) {
   slideDir = dir > 0 ? "r" : "l";
   const searchEl = document.getElementById("dept-search");
@@ -345,17 +288,14 @@ function updateDeptChip() {
   chip.classList.add(slideDir === "r" ? "slide-r" : "slide-l");
 }
 
-// ─── MAIN RENDER ─────────────────────────────────────────────────────────────
 function render(slide = false) {
   const dept = DEPTS[deptIdx];
   const inWindow = filterByPeriod(allReports);
 
-  // Case-insensitive branch_name match so 'Admin' === 'admin' etc.
   const forDept = inWindow.filter(r =>
     String(r.branch_name || "").toLowerCase() === dept.id.toLowerCase()
   );
 
-  // Split by role keyword (case-insensitive)
   const emp = forDept.filter(r =>
     String(r.role || "").toLowerCase().includes(ROLE_EMP_KEYWORD)
   );
@@ -378,7 +318,6 @@ function render(slide = false) {
   main.appendChild(buildStrip(emp, cli));
   main.appendChild(buildPanels(emp, cli));
 
-  // Animate bars after DOM is painted
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       document.querySelectorAll(".bar-fill").forEach(bar => {
@@ -388,7 +327,6 @@ function render(slide = false) {
   });
 }
 
-// ─── SUMMARY STRIP ───────────────────────────────────────────────────────────
 function buildStrip(emp, cli) {
   const all = [...emp, ...cli];
   const total = all.length;
@@ -426,7 +364,6 @@ function buildStrip(emp, cli) {
   return strip;
 }
 
-// ─── PANELS ──────────────────────────────────────────────────────────────────
 function buildPanels(emp, cli) {
   const frag = document.createDocumentFragment();
 
@@ -521,7 +458,6 @@ function buildPanel(type, label, rows, numColorClass) {
   return panel;
 }
 
-// ─── STATUS BOX ──────────────────────────────────────────────────────────────
 function renderStatus(title, msg) {
   const main = document.getElementById("main");
   if (!main) return;
@@ -532,7 +468,6 @@ function renderStatus(title, msg) {
     </div>`;
 }
 
-// ─── BOOT ─────────────────────────────────────────────────────────────────────
 initSupabase();
 updateDeptChip();
 loadData();
@@ -547,16 +482,52 @@ window.handleACKey = handleACKey;
 window.exportToExcel = exportToExcel;
 
 // ─── EXCEL EXPORT ─────────────────────────────────────────────────────────────
-// Save a Copy — exports ALL data from the database, sorted by department.
-// Reads globals: allReports, DEPTS
-// Requires: xlsx library (cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js)
+// Exports data for the period chosen in the export-period-select dropdown
+// (defaults to the currently active dashboard period if the select is absent).
+// A "Period:" badge row is injected into every sheet so it's always clear
+// what time window the file represents.
+//
+// Filename pattern:
+//   DRJPRH_Export_daily_2026-03-17.xlsx
+//   DRJPRH_Export_monthly_2026-03-17.xlsx
+//   DRJPRH_Export_yearly_2026-03-17.xlsx
+//   DRJPRH_Export_all_2026-03-17.xlsx
+//
+// Add this HTML near your export button so the user can pick a period:
+//
+//   <select id="export-period-select">
+//     <option value="daily">Today</option>
+//     <option value="monthly">This Month</option>
+//     <option value="yearly">This Year</option>
+//     <option value="all">All-time</option>
+//   </select>
+//   <button id="export-btn" onclick="exportToExcel()">Save a Copy</button>
+//
 function exportToExcel() {
   const btn = document.getElementById('export-btn');
-  const reports = allReports || [];
   const depts = DEPTS || [];
 
+  // ── Determine which period to export ──────────────────────────────────────
+  // Priority: export-period-select value → active dashboard period → 'all'
+  const periodSelect = document.getElementById('export-period-select');
+  const exportPeriod = (periodSelect ? periodSelect.value : null) || period || 'all';
+
+  // Filter allReports to that window using the existing filterByPeriod helper.
+  // We pass the period explicitly so it never mutates the dashboard's global `period`.
+  const reports = exportPeriod === 'all'
+    ? (allReports || [])
+    : filterByPeriod(allReports || [], exportPeriod);
+
+  // Human-readable label used inside each sheet
+  const periodLabel = {
+    daily: 'Today',
+    monthly: 'This Month',
+    yearly: 'This Year',
+    all: 'All-time',
+  }[exportPeriod] || 'All-time';
+
   if (!reports.length) {
-    alert('No data loaded yet — please wait for the page to finish loading, then try again.');
+    alert(`No data found for "${periodLabel}". Try a wider period or refresh first.`);
     return;
   }
 
@@ -574,11 +545,10 @@ function exportToExcel() {
     const now = new Date();
     const dateStamp = now.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    const allData = [...reports];
-
     const isEmp = r => String(r.role || '').toLowerCase().includes('employee');
     const isCli = r => String(r.role || '').toLowerCase().includes('client');
 
+    // ── Cell styles ──────────────────────────────────────────────────────────
     const styleHdr = {
       font: { bold: true, name: 'Arial', sz: 10, color: { rgb: 'FFFFFF' } },
       fill: { patternType: 'solid', fgColor: { rgb: '253900' } },
@@ -593,6 +563,16 @@ function exportToExcel() {
       font: { sz: 9, name: 'Arial', italic: true, color: { rgb: '6b7c5e' } },
       alignment: { horizontal: 'center' }
     };
+    // NEW: green-tinted badge that shows the period prominently
+    const stylePeriod = {
+      font: { sz: 9, name: 'Arial', bold: true, color: { rgb: '1a3d00' } },
+      fill: { patternType: 'solid', fgColor: { rgb: 'd4edaa' } },
+      alignment: { horizontal: 'center', vertical: 'center' },
+      border: {
+        top: { style: 'thin', color: { rgb: '7cb518' } },
+        bottom: { style: 'thin', color: { rgb: '7cb518' } }
+      }
+    };
     const styleAlt = { fill: { patternType: 'solid', fgColor: { rgb: 'F0F4EB' } } };
     const styleCell = (leftAlign, wrap) => ({
       font: { name: 'Arial', sz: 10 },
@@ -605,7 +585,7 @@ function exportToExcel() {
     const sortedDepts = [...depts].sort((a, b) => a.label.localeCompare(b.label));
 
     sortedDepts.forEach(dept => {
-      const dRows = allData
+      const dRows = reports
         .filter(r => String(r.branch_name || '').toLowerCase() === dept.id.toLowerCase())
         .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
@@ -620,27 +600,49 @@ function exportToExcel() {
         return [i + 1, dtStr, typeStr, Number(r.rating) || '—', r.remarks || r.comment || ''];
       });
 
+      // Sheet layout (row indices, 0-based):
+      //  0 — Title  (dept name + id)
+      //  1 — Sub    (generated date + record count)
+      //  2 — Period badge  ← NEW
+      //  3 — blank spacer
+      //  4 — Column headers
+      //  5+ — Data rows
       const ws = XLSX.utils.aoa_to_sheet([
         [`${dept.label}  (${dept.id})`],
-        [`All-time data   ·   Generated: ${dateStamp}   ·   ${dRows.length} record(s)`],
+        [`Generated: ${dateStamp}   ·   ${dRows.length} record(s)`],
+        [`Period: ${periodLabel}`],
         [],
         hdr,
         ...sheetRows
       ]);
+
       ws['!cols'] = cols;
-      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }];
-      ws['!rows'] = [{ hpt: 26 }, { hpt: 16 }, { hpt: 6 }, { hpt: 32 }];
+      ws['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } },
+        { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } }, // merge period row
+      ];
+      ws['!rows'] = [
+        { hpt: 26 }, // title
+        { hpt: 14 }, // subtitle
+        { hpt: 18 }, // period badge
+        { hpt: 6 }, // spacer
+        { hpt: 32 }, // header
+      ];
+
       if (ws['A1']) ws['A1'].s = styleTitle;
       if (ws['A2']) ws['A2'].s = styleSub;
+      if (ws['A3']) ws['A3'].s = stylePeriod; // ← apply period badge style
 
-      // header row styles
+      // Column header row is at index 4
       for (let c = 0; c < 5; c++) {
-        const a = XLSX.utils.encode_cell({ r: 3, c });
+        const a = XLSX.utils.encode_cell({ r: 4, c });
         if (ws[a]) ws[a].s = styleHdr;
       }
-      // data row styles
+
+      // Data rows start at index 5
       sheetRows.forEach((_, i) => {
-        const row = 4 + i;
+        const row = 5 + i;
         for (let c = 0; c < 5; c++) {
           const a = XLSX.utils.encode_cell({ r: row, c });
           if (!ws[a]) return;
@@ -655,8 +657,8 @@ function exportToExcel() {
       XLSX.utils.book_append_sheet(wb, ws, sheetName);
     });
 
-    /* ── download ── */
-    XLSX.writeFile(wb, `DRJPRH_FullExport_AllDepts_${now.toISOString().slice(0, 10)}.xlsx`);
+    // Filename includes the chosen period for instant clarity
+    XLSX.writeFile(wb, `DRJPRH_Export_${exportPeriod}_${now.toISOString().slice(0, 10)}.xlsx`);
 
   } catch (err) {
     console.error('Export error:', err);
