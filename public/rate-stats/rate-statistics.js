@@ -282,16 +282,6 @@ function updateDeptChip() {
   chip.classList.remove("slide-r", "slide-l");
   void chip.offsetWidth;
   chip.classList.add(slideDir === "r" ? "slide-r" : "slide-l");
-
-  // Refresh swipe hint dots — show 5 dots, active one = current position bucket
-  const hint = document.getElementById("chip-swipe-hint");
-  if (hint) {
-    const DOT_COUNT = 5;
-    const bucket = Math.floor((deptIdx / DEPTS.length) * DOT_COUNT);
-    hint.innerHTML = Array.from({ length: DOT_COUNT }, (_, i) =>
-      `<span${i === bucket ? ' class="active"' : ""}></span>`
-    ).join("");
-  }
 }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
@@ -333,13 +323,37 @@ function buildStrip(emp, cli) {
 
 function buildPanels(emp, cli) {
   const frag = document.createDocumentFragment();
-  const row = document.createElement("div"); row.className = "panels";
+
+  // ── Employee + Client side-by-side row ───────────────────────────────────
+  const row = document.createElement("div");
+  row.className = "panels";
   row.appendChild(buildPanel("emp", "👤 Employee", emp, "col-green"));
   row.appendChild(buildPanel("cli", "🤝 Client", cli, "col-gold"));
   frag.appendChild(row);
-  const ovrWrap = document.createElement("div"); ovrWrap.className = "panels-overall";
+
+  // ── Swipe hint dots (touch screens only, shown via CSS) ──────────────────
+  const DOT_COUNT = 5;
+  const bucket = Math.floor((deptIdx / DEPTS.length) * DOT_COUNT);
+  const hintRow = document.createElement("div");
+  hintRow.className = "panels-swipe-hint";
+  hintRow.setAttribute("aria-hidden", "true");
+  hintRow.innerHTML = Array.from({ length: DOT_COUNT }, (_, i) =>
+    `<span${i === bucket ? ' class="active"' : ""}></span>`
+  ).join("");
+  frag.appendChild(hintRow);
+
+  // ── Swipe left = next dept, right = prev dept ────────────────────────────
+  addSwipe(row,
+    () => changeDept(+1),   // swipe left  → next
+    () => changeDept(-1)    // swipe right → prev
+  );
+
+  // ── Overall / All-depts panel ────────────────────────────────────────────
+  const ovrWrap = document.createElement("div");
+  ovrWrap.className = "panels-overall";
   ovrWrap.appendChild(buildAllDeptsPanel());
   frag.appendChild(ovrWrap);
+
   return frag;
 }
 
@@ -648,17 +662,6 @@ function renderStatus(title, msg) {
 initSupabase();
 updateDeptChip();
 loadData();
-
-// Attach swipe to the dept chip once DOM is ready
-window.addEventListener("DOMContentLoaded", () => {
-  const chip = document.getElementById("dept-chip");
-  if (chip) {
-    addSwipe(chip,
-      () => changeDept(+1),   // swipe left  → next dept
-      () => changeDept(-1)    // swipe right → prev dept
-    );
-  }
-});
 
 window.doRefresh = doRefresh;
 window.setFilter = setFilter;
