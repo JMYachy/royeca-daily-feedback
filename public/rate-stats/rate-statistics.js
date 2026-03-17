@@ -540,127 +540,86 @@ function exportToExcel() {
       const ws = {};
       ws['!ref'] = 'A1:A1';
       ws['!rows'] = [];
+      // Columns: A=Score, B=Emp, C=Cli, D=Combined  (4 cols only)
       ws['!cols'] = [
-        { wch: 20 },             // A  Score
-        { wch: 7 }, { wch: 7 }, { wch: 7 }, // B-D Daily
-        { wch: 2 },             // E  spacer
-        { wch: 7 }, { wch: 7 }, { wch: 7 }, // F-H Monthly
-        { wch: 2 },             // I  spacer
-        { wch: 7 }, { wch: 7 }, { wch: 7 }, // J-L Yearly
+        { wch: 20 }, // A  Score
+        { wch: 12 }, // B  Employee
+        { wch: 12 }, // C  Client
+        { wch: 12 }, // D  Combined
       ];
 
       let row = 0;
 
       // ── Title ──────────────────────────────────────────────────────────
-      for (let c = 0; c < 12; c++) setCell(ws, row, c, c === 0 ? `${dept.label}  (${dept.id})` : '', styleTitle);
-      addMerge(ws, row, 0, row, 11);
+      for (let c = 0; c < 4; c++) setCell(ws, row, c, c === 0 ? `${dept.label}  (${dept.id})` : '', styleTitle);
+      addMerge(ws, row, 0, row, 3);
       ws['!rows'][row] = { hpt: 26 }; row++;
 
-      for (let c = 0; c < 12; c++) setCell(ws, row, c, c === 0 ? `Generated: ${dateStamp}   ·   Records in raw table: ${rawRows.length}` : '', styleSub);
-      addMerge(ws, row, 0, row, 11);
+      for (let c = 0; c < 4; c++) setCell(ws, row, c, c === 0 ? `Generated: ${dateStamp}   ·   Records in raw table: ${rawRows.length}` : '', styleSub);
+      addMerge(ws, row, 0, row, 3);
       ws['!rows'][row] = { hpt: 14 }; row++;
 
       ws['!rows'][row] = { hpt: 8 }; row++; // spacer
 
-      // ── Rating Totals Table ────────────────────────────────────────────
+      // ── Rating Totals Table (single period matching export selection) ───
+      // Pick only the rows for the selected period
+      const periodRows = exportPeriod === 'monthly' ? dM
+        : exportPeriod === 'yearly' ? dY
+          : dD; // daily is default (also covers 'all' → use daily window for totals)
 
-      // Row A: Period group headers (merged over their 3 sub-cols)
-      setCell(ws, row, 0, '', styleScoreHdr); // blank corner
-      for (let c = 1; c <= 3; c++) setCell(ws, row, c, 'TODAY', stylePeriodHdr('2e7d32'));
-      setCell(ws, row, 4, '', styleData(false));
-      for (let c = 5; c <= 7; c++) setCell(ws, row, c, 'THIS MONTH', stylePeriodHdr('1565c0'));
-      setCell(ws, row, 8, '', styleData(false));
-      for (let c = 9; c <= 11; c++) setCell(ws, row, c, 'THIS YEAR', stylePeriodHdr('6a1e76'));
-      addMerge(ws, row, 1, row, 3);
-      addMerge(ws, row, 5, row, 7);
-      addMerge(ws, row, 9, row, 11);
+      const periodRgb = exportPeriod === 'monthly' ? '1565c0'
+        : exportPeriod === 'yearly' ? '6a1e76'
+          : '2e7d32'; // daily / all → green
+
+      // Period header row (merged A:D)
+      for (let c = 0; c < 4; c++) setCell(ws, row, c, c === 0 ? periodLabel.toUpperCase() : '', stylePeriodHdr(periodRgb));
+      addMerge(ws, row, 0, row, 3);
       ws['!rows'][row] = { hpt: 20 }; row++;
 
-      // Row B: Column sub-headers (Score | Emp Cli All | spacer | Emp Cli All | spacer | Emp Cli All)
+      // Column sub-headers
       setCell(ws, row, 0, 'Score', styleScoreHdr);
-      ['Emp', 'Cli', 'All', '', 'Emp', 'Cli', 'All', '', 'Emp', 'Cli', 'All'].forEach((h, i) => {
-        setCell(ws, row, i + 1, h, h === '' ? styleData(false) : styleColHdr);
-      });
+      setCell(ws, row, 1, 'Employee', styleColHdr);
+      setCell(ws, row, 2, 'Client', styleColHdr);
+      setCell(ws, row, 3, 'Combined', styleColHdr);
       ws['!rows'][row] = { hpt: 20 }; row++;
 
-      // Compute freq arrays
-      const fDE = ratingFreq(dD.filter(isEmp)), fDC = ratingFreq(dD.filter(isCli)), fDA = ratingFreq(dD);
-      const fME = ratingFreq(dM.filter(isEmp)), fMC = ratingFreq(dM.filter(isCli)), fMA = ratingFreq(dM);
-      const fYE = ratingFreq(dY.filter(isEmp)), fYC = ratingFreq(dY.filter(isCli)), fYA = ratingFreq(dY);
+      // Freq arrays for the selected period
+      const fE = ratingFreq(periodRows.filter(isEmp));
+      const fC = ratingFreq(periodRows.filter(isCli));
+      const fA = ratingFreq(periodRows);
+      const dom = fA.indexOf(Math.max(...fA));
 
-      // Dominant index per period (score with highest combined count)
-      const domD = fDA.indexOf(Math.max(...fDA));
-      const domM = fMA.indexOf(Math.max(...fMA));
-      const domY = fYA.indexOf(Math.max(...fYA));
-
-      // Rows C-L: one row per score 1-10
+      // One row per score 1-10
       for (let i = 0; i < 10; i++) {
         const alt = i % 2 === 0;
-        const isDomD = fDA[i] > 0 && i === domD;
-        const isDomM = fMA[i] > 0 && i === domM;
-        const isDomY = fYA[i] > 0 && i === domY;
-
-        setCell(ws, row, 0, `${i + 1}/10  ${EMOJIS[i]}`, styleDataL(alt));
-
-        setCell(ws, row, 1, fDE[i], isDomD ? styleDom : styleData(alt));
-        setCell(ws, row, 2, fDC[i], isDomD ? styleDom : styleData(alt));
-        setCell(ws, row, 3, fDA[i], isDomD ? styleDom : styleData(alt));
-
-        setCell(ws, row, 4, '', styleData(alt)); // spacer
-
-        setCell(ws, row, 5, fME[i], isDomM ? styleDom : styleData(alt));
-        setCell(ws, row, 6, fMC[i], isDomM ? styleDom : styleData(alt));
-        setCell(ws, row, 7, fMA[i], isDomM ? styleDom : styleData(alt));
-
-        setCell(ws, row, 8, '', styleData(alt)); // spacer
-
-        setCell(ws, row, 9, fYE[i], isDomY ? styleDom : styleData(alt));
-        setCell(ws, row, 10, fYC[i], isDomY ? styleDom : styleData(alt));
-        setCell(ws, row, 11, fYA[i], isDomY ? styleDom : styleData(alt));
-
+        const isDom = fA[i] > 0 && i === dom;
+        setCell(ws, row, 0, `${i + 1}/10  ${EMOJIS[i]}`, isDom ? { ...styleDom, alignment: { horizontal: 'left', vertical: 'center' } } : styleDataL(alt));
+        setCell(ws, row, 1, fE[i], isDom ? styleDom : styleData(alt));
+        setCell(ws, row, 2, fC[i], isDom ? styleDom : styleData(alt));
+        setCell(ws, row, 3, fA[i], isDom ? styleDom : styleData(alt));
         ws['!rows'][row] = { hpt: 16 }; row++;
       }
 
       // TOTAL row
-      const tDE = dD.filter(isEmp).length, tDC = dD.filter(isCli).length;
-      const tME = dM.filter(isEmp).length, tMC = dM.filter(isCli).length;
-      const tYE = dY.filter(isEmp).length, tYC = dY.filter(isCli).length;
-
+      const tE = periodRows.filter(isEmp).length;
+      const tC = periodRows.filter(isCli).length;
       setCell(ws, row, 0, 'TOTAL', styleTotalsL);
-      setCell(ws, row, 1, tDE, styleTotals);
-      setCell(ws, row, 2, tDC, styleTotals);
-      setCell(ws, row, 3, tDE + tDC, styleTotals);
-      setCell(ws, row, 4, '', styleTotals);
-      setCell(ws, row, 5, tME, styleTotals);
-      setCell(ws, row, 6, tMC, styleTotals);
-      setCell(ws, row, 7, tME + tMC, styleTotals);
-      setCell(ws, row, 8, '', styleTotals);
-      setCell(ws, row, 9, tYE, styleTotals);
-      setCell(ws, row, 10, tYC, styleTotals);
-      setCell(ws, row, 11, tYE + tYC, styleTotals);
+      setCell(ws, row, 1, tE, styleTotals);
+      setCell(ws, row, 2, tC, styleTotals);
+      setCell(ws, row, 3, tE + tC, styleTotals);
       ws['!rows'][row] = { hpt: 18 }; row++;
 
       // AVG SCORE row
       setCell(ws, row, 0, 'AVG SCORE', styleTotalsL);
-      setCell(ws, row, 1, avgOf(dD.filter(isEmp)), styleTotals);
-      setCell(ws, row, 2, avgOf(dD.filter(isCli)), styleTotals);
-      setCell(ws, row, 3, avgOf(dD), styleTotals);
-      setCell(ws, row, 4, '', styleTotals);
-      setCell(ws, row, 5, avgOf(dM.filter(isEmp)), styleTotals);
-      setCell(ws, row, 6, avgOf(dM.filter(isCli)), styleTotals);
-      setCell(ws, row, 7, avgOf(dM), styleTotals);
-      setCell(ws, row, 8, '', styleTotals);
-      setCell(ws, row, 9, avgOf(dY.filter(isEmp)), styleTotals);
-      setCell(ws, row, 10, avgOf(dY.filter(isCli)), styleTotals);
-      setCell(ws, row, 11, avgOf(dY), styleTotals);
+      setCell(ws, row, 1, avgOf(periodRows.filter(isEmp)), styleTotals);
+      setCell(ws, row, 2, avgOf(periodRows.filter(isCli)), styleTotals);
+      setCell(ws, row, 3, avgOf(periodRows), styleTotals);
       ws['!rows'][row] = { hpt: 18 }; row++;
 
       // ── Spacer ─────────────────────────────────────────────────────────
       ws['!rows'][row] = { hpt: 10 }; row++;
 
       // ── Raw Records Table ──────────────────────────────────────────────
-      // Widen remarks column (col 3 maps to raw table's 4th col, which is D=index 3 in raw's own 5-col layout)
-      // Raw table uses cols 0-4; we reset col widths to suit
       ws['!cols'] = [
         { wch: 5 }, // #
         { wch: 22 }, // Date & Time
@@ -724,4 +683,4 @@ function exportToExcel() {
       Save a Copy`;
     btn.disabled = false;
   }
-} stats
+}
