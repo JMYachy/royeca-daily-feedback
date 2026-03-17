@@ -1211,19 +1211,14 @@ body::after {
 }
 
 /* ── Touch / swipe affordances ───────────────────────────────────────────── */
-
-/* Panels row: allow horizontal swipe without blocking vertical scroll       */
 .panels {
   touch-action: pan-y;
 }
 
-/* Overall chart: allow horizontal swipe for page navigation                 */
 .all-depts-chart {
   touch-action: pan-y;
 }
 
-/* ── Swipe hint dots ── */
-/* Shared dot-row base — hidden by default, shown only on touch devices      */
 .panels-swipe-hint,
 .adc-swipe-hint {
   display: none;
@@ -1234,7 +1229,6 @@ body::after {
   pointer-events: none;
 }
 
-/* panels hint sits between the emp/cli row and the overall panel            */
 .panels-swipe-hint {
   margin-top: 4px;
   margin-bottom: -4px;
@@ -1256,11 +1250,331 @@ body::after {
   transform: scale(1.35);
 }
 
-/* Only show on real touch screens (finger, not mouse)                       */
 @media (hover: none) and (pointer: coarse) {
 
   .panels-swipe-hint,
   .adc-swipe-hint {
     display: flex;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — tablet  (≤ 860px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+
+  .page {
+    padding: 0 16px 60px;
+  }
+
+  .topnav {
+    padding: 16px 16px 14px;
+  }
+
+  .logo {
+    font-size: 17px;
+  }
+
+  .nav-right {
+    gap: 7px;
+  }
+
+  .nav-pill {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .filter-bar {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .f-btn {
+    padding: 7px 18px;
+    font-size: 12px;
+  }
+
+  .dept-switcher {
+    justify-content: stretch;
+  }
+
+  .pill-wrap {
+    width: 100%;
+  }
+
+  .stacked-chip {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .summary-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .panels {
+    gap: 12px;
+  }
+
+  .panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .adc-role-switch {
+    flex-wrap: wrap;
+  }
+
+  .adc-score-btn {
+    padding: 3px 7px;
+    font-size: 11px;
+  }
+
+  .adc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — mobile  (≤ 600px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  .page {
+    padding: 0 12px 48px;
+  }
+
+  .topnav {
+    padding: 12px 12px 10px;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 15px;
+  }
+
+  .nav-pill {
+    padding: 5px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .page-heading {
+    margin-bottom: 20px;
+  }
+
+  .page-sub {
+    font-size: 13px;
+  }
+
+  .filter-bar {
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+
+  .f-btn {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+
+  .dept-switcher {
+    margin-bottom: 20px;
+  }
+
+  .chip-name {
+    font-size: 13px;
+  }
+
+  .chip-nav-btn {
+    width: 38px;
+    height: 44px;
+  }
+
+  /* summary strip: 2 columns */
+  .summary-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .s-chip {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .s-chip-emoji {
+    font-size: 18px;
+  }
+
+  .s-chip-n {
+    font-size: 17px;
+  }
+
+  /* panels: single column */
+  .panels {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .mini-stats {
+    gap: 6px;
+  }
+
+  .mini-stat {
+    padding: 7px 10px;
+    min-width: 52px;
+  }
+
+  .mini-stat-n {
+    font-size: 15px;
+  }
+
+  /* bar chart area shorter on mobile */
+  .chart-area {
+    height: 160px;
+    gap: 3px;
+  }
+
+  .bar-emoji {
+    font-size: 10px;
+  }
+
+  .bar-num {
+    font-size: 9px;
+  }
+
+  /* ── All-depts panel ── */
+  .adc-role-switch {
+    width: 100%;
+  }
+
+  .adc-role-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .adc-score-bar {
+    gap: 4px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  .adc-score-btn {
+    padding: 4px 7px;
+    font-size: 11px;
+    gap: 2px;
+  }
+
+  .adc-score-btn span {
+    font-size: 9px;
+  }
+
+  .adc-score-label {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  .adc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .adc-pagination {
+    align-self: flex-end;
+  }
+
+  /* All-depts chart: acronym labels are short so 240px is enough */
+  .all-depts-chart {
+    height: 240px;
+    gap: 8px;
+  }
+
+  .adc-bar-track {
+    width: 60%;
+    max-width: 22px;
+  }
+
+  .adc-emoji {
+    font-size: 13px;
+  }
+
+  .adc-count {
+    font-size: 9px;
+  }
+
+  .adc-label-full {
+    font-size: 10px;
+  }
+
+  .adc-id-tag {
+    font-size: 8px;
+  }
+
+  /* Acronym-only label on mobile — bold green monospace, no wrapping */
+  .adc-label-acronym {
+    font-family: 'DM Mono', monospace !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: var(--green) !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    white-space: nowrap;
+    padding: 0 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — very small  (≤ 380px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+
+  .summary-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .f-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  /* score buttons: emoji only, hide the number */
+  .adc-score-btn span {
+    display: none;
+  }
+
+  .adc-score-btn {
+    padding: 5px 7px;
+    font-size: 13px;
+  }
+
+  .adc-role-btn {
+    font-size: 10px;
+    padding: 5px 6px;
+  }
+
+  .all-depts-chart {
+    height: 260px;
+    gap: 6px;
+  }
+
+  .adc-label-full {
+    font-size: 9px;
   }
 }

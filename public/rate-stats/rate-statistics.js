@@ -282,6 +282,7 @@ function updateDeptChip() {
   chip.classList.remove("slide-r", "slide-l");
   void chip.offsetWidth;
   chip.classList.add(slideDir === "r" ? "slide-r" : "slide-l");
+
 }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
@@ -324,37 +325,117 @@ function buildStrip(emp, cli) {
 function buildPanels(emp, cli) {
   const frag = document.createDocumentFragment();
 
-  // ── Employee + Client side-by-side row ───────────────────────────────────
+  // Employee + Client row
   const row = document.createElement("div");
   row.className = "panels";
+  row.id = "panels-row"; // stable ID so in-place update can find it
   row.appendChild(buildPanel("emp", "👤 Employee", emp, "col-green"));
   row.appendChild(buildPanel("cli", "🤝 Client", cli, "col-gold"));
   frag.appendChild(row);
 
-  // ── Swipe hint dots (touch screens only, shown via CSS) ──────────────────
+  // Swipe hint dots — visible only on touch screens via CSS
   const DOT_COUNT = 5;
   const bucket = Math.floor((deptIdx / DEPTS.length) * DOT_COUNT);
   const hintRow = document.createElement("div");
   hintRow.className = "panels-swipe-hint";
+  hintRow.id = "panels-swipe-hint";
   hintRow.setAttribute("aria-hidden", "true");
   hintRow.innerHTML = Array.from({ length: DOT_COUNT }, (_, i) =>
     `<span${i === bucket ? ' class="active"' : ""}></span>`
   ).join("");
   frag.appendChild(hintRow);
 
-  // ── Swipe left = next dept, right = prev dept ────────────────────────────
+  // Swipe: change dept but keep scroll position stable
   addSwipe(row,
-    () => changeDept(+1),   // swipe left  → next
-    () => changeDept(-1)    // swipe right → prev
+    () => swipeDept(+1),
+    () => swipeDept(-1)
   );
 
-  // ── Overall / All-depts panel ────────────────────────────────────────────
+  // Overall / All-depts panel
   const ovrWrap = document.createElement("div");
   ovrWrap.className = "panels-overall";
   ovrWrap.appendChild(buildAllDeptsPanel());
   frag.appendChild(ovrWrap);
 
   return frag;
+}
+
+// ── In-place dept swipe ───────────────────────────────────────────────────────
+// Changes the department and re-renders ONLY the summary strip + emp/cli panels
+// in-place, without touching the overall panel and without resetting scroll.
+function swipeDept(dir) {
+  // Advance dept index
+  slideDir = dir > 0 ? "r" : "l";
+  const s = document.getElementById("dept-search");
+  if (s) s.value = "";
+  filteredDepts = DEPTS.slice();
+  closeAC();
+  deptIdx = (deptIdx + dir + DEPTS.length) % DEPTS.length;
+  updateDeptChip();
+
+  // Freeze scroll position
+  const scrollY = window.scrollY;
+
+  // Gather new data for the selected dept
+  const dept = DEPTS[deptIdx];
+  const inWindow = filterByPeriod(allReports);
+  const forDept = inWindow.filter(r =>
+    String(r.branch_name || "").toLowerCase() === dept.id.toLowerCase()
+  );
+  const emp = forDept.filter(r => String(r.role || "").toLowerCase().includes(ROLE_EMP_KEYWORD));
+  const cli = forDept.filter(r => String(r.role || "").toLowerCase().includes(ROLE_CLI_KEYWORD));
+
+  // Re-render summary strip in-place
+  const main = document.getElementById("main");
+  if (!main) return;
+  const oldStrip = main.querySelector(".summary-strip");
+  const newStrip = buildStrip(emp, cli);
+  if (oldStrip) {
+    main.replaceChild(newStrip, oldStrip);
+  }
+
+  // Re-render emp/cli panels row in-place (slide animation)
+  const oldRow = document.getElementById("panels-row");
+  if (oldRow) {
+    const newRow = document.createElement("div");
+    newRow.className = "panels";
+    newRow.id = "panels-row";
+    newRow.appendChild(buildPanel("emp", "👤 Employee", emp, "col-green"));
+    newRow.appendChild(buildPanel("cli", "🤝 Client", cli, "col-gold"));
+
+    // Slide animation on the row
+    newRow.classList.add(slideDir === "r" ? "slide-r" : "slide-l");
+
+    // Re-attach swipe to the new row
+    addSwipe(newRow,
+      () => swipeDept(+1),
+      () => swipeDept(-1)
+    );
+
+    oldRow.parentNode.replaceChild(newRow, oldRow);
+
+    // Animate bars
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        newRow.querySelectorAll(".bar-fill").forEach(bar => {
+          bar.style.height = bar.dataset.target || "0%";
+        });
+      });
+    });
+  }
+
+  // Update hint dots
+  const hint = document.getElementById("panels-swipe-hint");
+  if (hint) {
+    const DOT_COUNT = 5;
+    const bucket = Math.floor((deptIdx / DEPTS.length) * DOT_COUNT);
+    hint.innerHTML = Array.from({ length: DOT_COUNT }, (_, i) =>
+      `<span${i === bucket ? ' class="active"' : ""}></span>`
+    ).join("");
+  }
+
+  // Restore scroll position — use requestAnimationFrame to ensure DOM has settled
+  requestAnimationFrame(() => { window.scrollTo({ top: scrollY, behavior: "instant" }); });
 }
 
 // Score filter colours
