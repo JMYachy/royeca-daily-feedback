@@ -1209,3 +1209,404 @@ body::after {
   letter-spacing: .04em;
   margin-top: 2px;
 }
+
+/* ── Touch / swipe affordances ───────────────────────────────────────────── */
+
+/* Allow horizontal swipe on the dept chip without blocking vertical page scroll */
+.stacked-chip {
+  touch-action: pan-y;
+}
+
+/* Allow horizontal swipe on the overall chart area */
+.all-depts-chart {
+  touch-action: pan-y;
+}
+
+/* Swipe hint dot row — shown only on touch devices */
+.chip-swipe-hint,
+.adc-swipe-hint {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 0 2px;
+  pointer-events: none;
+}
+
+.chip-swipe-hint span,
+.adc-swipe-hint span {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border2);
+  transition: background .2s, transform .2s;
+}
+
+.chip-swipe-hint span.active,
+.adc-swipe-hint span.active {
+  background: var(--green);
+  transform: scale(1.3);
+}
+
+/* Only render hints on real touch screens */
+@media (hover: none) and (pointer: coarse) {
+
+  .chip-swipe-hint,
+  .adc-swipe-hint {
+    display: flex;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — tablet  (≤ 860px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+
+  .page {
+    padding: 0 16px 60px;
+  }
+
+  .topnav {
+    padding: 16px 16px 14px;
+  }
+
+  .logo {
+    font-size: 17px;
+  }
+
+  /* stack nav pills tighter */
+  .nav-right {
+    gap: 7px;
+  }
+
+  .nav-pill {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  /* filter bar centred & full readable */
+  .filter-bar {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .f-btn {
+    padding: 7px 18px;
+    font-size: 12px;
+  }
+
+  /* dept switcher full width */
+  .dept-switcher {
+    justify-content: stretch;
+  }
+
+  .pill-wrap {
+    width: 100%;
+  }
+
+  .stacked-chip {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* summary strip: 2 columns on tablet */
+  .summary-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* emp/cli side by side still ok, just tighter gap */
+  .panels {
+    gap: 12px;
+  }
+
+  /* panel heading wraps nicely */
+  .panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* role switch wraps */
+  .adc-role-switch {
+    flex-wrap: wrap;
+  }
+
+  /* score buttons smaller */
+  .adc-score-btn {
+    padding: 3px 7px;
+    font-size: 11px;
+  }
+
+  /* toolbar stacks */
+  .adc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — mobile  (≤ 600px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  .page {
+    padding: 0 12px 48px;
+  }
+
+  /* nav: logo left, pills right, wrap to second line if needed */
+  .topnav {
+    padding: 12px 12px 10px;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 15px;
+  }
+
+  .nav-pill {
+    padding: 5px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  /* hide "Save a Copy" text on very small screens — keep icon */
+  .nav-pill-export span {
+    display: none;
+  }
+
+  /* heading */
+  .page-heading {
+    margin-bottom: 20px;
+  }
+
+  .page-sub {
+    font-size: 13px;
+  }
+
+  /* filter bar */
+  .filter-bar {
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+
+  .f-btn {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+
+  /* dept switcher */
+  .dept-switcher {
+    margin-bottom: 20px;
+  }
+
+  .chip-name {
+    font-size: 13px;
+  }
+
+  .chip-nav-btn {
+    width: 38px;
+    height: 44px;
+  }
+
+  /* summary strip: single column on mobile */
+  .summary-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .s-chip {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .s-chip-emoji {
+    font-size: 18px;
+  }
+
+  .s-chip-n {
+    font-size: 17px;
+  }
+
+  /* emp/cli panels: single column */
+  .panels {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  /* panel head stacks */
+  .panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .mini-stats {
+    gap: 6px;
+  }
+
+  .mini-stat {
+    padding: 7px 10px;
+    min-width: 52px;
+  }
+
+  .mini-stat-n {
+    font-size: 15px;
+  }
+
+  /* bar chart area slightly shorter */
+  .chart-area {
+    height: 160px;
+    gap: 3px;
+  }
+
+  .bar-emoji {
+    font-size: 10px;
+  }
+
+  .bar-num {
+    font-size: 9px;
+  }
+
+  /* ── All Depts panel ── */
+  .all-depts-panel .panel-head {
+    gap: 10px;
+  }
+
+  /* role switch: full width, evenly split */
+  .adc-role-switch {
+    width: 100%;
+  }
+
+  .adc-role-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  /* score filter: tighter, wrap freely */
+  .adc-score-bar {
+    gap: 4px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  .adc-score-btn {
+    padding: 4px 7px;
+    font-size: 11px;
+    gap: 2px;
+  }
+
+  .adc-score-btn span {
+    font-size: 9px;
+  }
+
+  .adc-score-label {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  /* toolbar */
+  .adc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .adc-pagination {
+    align-self: flex-end;
+  }
+
+  /* All-depts chart: shorter now labels are acronyms only */
+  .all-depts-chart {
+    height: 240px;
+    gap: 8px;
+  }
+
+  /* thin bar: a bit narrower still, wider label */
+  .adc-bar-track {
+    width: 60%;
+    max-width: 22px;
+  }
+
+  .adc-emoji {
+    font-size: 13px;
+  }
+
+  .adc-count {
+    font-size: 9px;
+  }
+
+  .adc-label-full {
+    font-size: 10px;
+  }
+
+  .adc-id-tag {
+    font-size: 8px;
+  }
+
+  /* Acronym label — bold, monospace, no wrapping */
+  .adc-label-acronym {
+    font-family: 'DM Mono', monospace !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: var(--green) !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    white-space: nowrap;
+    padding: 0 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — very small  (≤ 380px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+
+  .summary-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .f-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  /* score buttons: emoji only, drop the number */
+  .adc-score-btn span {
+    display: none;
+  }
+
+  .adc-score-btn {
+    padding: 5px 7px;
+    font-size: 13px;
+  }
+
+  .adc-role-btn {
+    font-size: 10px;
+    padding: 5px 6px;
+  }
+
+  /* hide role label text, keep icon */
+  .adc-role-btn span {
+    display: none;
+  }
+
+  .all-depts-chart {
+    height: 280px;
+    gap: 6px;
+  }
+
+  .adc-label-full {
+    font-size: 9px;
+  }
+}
