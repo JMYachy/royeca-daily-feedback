@@ -877,14 +877,335 @@ body::after {
   animation: fadeUp .4s ease both;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ── All Departments Panel ───────────────────────────────────────────────── */
+.all-depts-panel {
+  width: 100%;
+}
+
+/* ── Role switch ── */
+.adc-role-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 3px;
+}
+
+.adc-role-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  color: var(--muted2);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background .15s, color .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.adc-role-btn:hover {
+  color: var(--green);
+  background: var(--green-dim);
+}
+
+.adc-role-btn.active {
+  background: var(--green);
+  color: #f0f4eb;
+  box-shadow: 0 2px 10px rgba(37, 57, 0, .2);
+}
+
+/* ── Score filter bar ── */
+.adc-score-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 14px;
+  margin-bottom: 10px;
+}
+
+.adc-score-label {
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  letter-spacing: .04em;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.adc-score-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 9px;
+  border-radius: 100px;
+  border: 1.5px solid color-mix(in srgb, var(--btn-color) 35%, transparent);
+  background: color-mix(in srgb, var(--btn-color) 10%, transparent);
+  color: color-mix(in srgb, var(--btn-color) 85%, #000);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .1s;
+  white-space: nowrap;
+}
+
+.adc-score-btn span {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+}
+
+.adc-score-btn:hover {
+  background: color-mix(in srgb, var(--btn-color) 22%, transparent);
+  border-color: color-mix(in srgb, var(--btn-color) 65%, transparent);
+  transform: translateY(-1px);
+}
+
+.adc-score-btn.active {
+  background: var(--btn-color);
+  border-color: var(--btn-color);
+  color: #fff;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--btn-color) 35%, transparent);
+}
+
+/* ── Toolbar row (active label + pagination) ── */
+.adc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.adc-active-label {
+  flex: 1;
+  min-height: 24px;
+}
+
+.adc-active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 11px;
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--chip-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--chip-color) 30%, transparent);
+  color: color-mix(in srgb, var(--chip-color) 90%, #000);
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.adc-active-chip strong {
+  font-weight: 700;
+}
+
+.adc-active-chip-neutral {
+  --chip-color: #253900;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  background: var(--surface2);
+  border-color: var(--border);
+}
+
+/* ── Pagination ── */
+.adc-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.adc-page-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--muted2);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.adc-page-btn:hover:not(:disabled) {
+  background: var(--green);
+  color: #f0f4eb;
+  border-color: var(--green);
+}
+
+.adc-page-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.adc-page-info {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.adc-page-sub {
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: 3px;
+}
+
+/* ── Chart ── */
+.all-depts-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 320px;
+  /* taller: bar area + label area below */
+  padding-top: 12px;
+  position: relative;
+  overflow: visible;
+}
+
+.all-depts-chart::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 12px;
+  bottom: 100px;
+  /* grid lines only in bar zone */
+  background-image: repeating-linear-gradient(to top, transparent 0, transparent calc(33.33% - 1px),
+      rgba(37, 57, 0, .06) calc(33.33% - 1px), rgba(37, 57, 0, .06) 33.33%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Each column: thin bar + emoji + value + label */
+.adc-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+/* The bar wrapper fills the top portion of the column */
+.adc-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+/* Thin bar track — same pattern as .bar-track */
+.adc-bar-track {
+  width: 55%;
+  /* thin — matches the emp/cli bar style */
+  max-width: 28px;
+  position: relative;
+  overflow: visible;
+  cursor: default;
+  border-radius: 5px 5px 0 0;
+  min-height: 4px;
+}
+
+.adc-bar-track:hover .adc-tip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* The colored fill — inherits fc-* classes */
+.adc-bar-fill {
+  width: 100%;
+  height: 0%;
+  border-radius: 5px 5px 0 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: height .65s cubic-bezier(.22, 1, .36, 1);
+}
+
+.adc-bar-fill.dom {
+  animation: domPulse 2.4s ease-in-out infinite alternate;
+}
+
+/* Tooltip (same as .bar-tip) */
+.adc-tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  color: var(--text);
+  line-height: 1.6;
+  transition: opacity .18s, transform .18s;
+  pointer-events: none;
+  z-index: 30;
+  box-shadow: 0 4px 14px rgba(37, 57, 0, .10);
+}
+
+/* Emoji representing the score/avg status */
+.adc-emoji {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Avg or count value under the emoji */
+.adc-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted2);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Full department label below the bar — horizontal, readable */
+.adc-label-full {
+  width: 100%;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.adc-id-tag {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: .04em;
+  margin-top: 2px;
 }

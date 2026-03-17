@@ -101,6 +101,9 @@ async function doRefresh() {
 // ─── FILTER BAR ──────────────────────────────────────────────────────────────
 function setFilter(p, btn) {
   period = p;
+  adcScoreFilter = null;
+  adcPage = 0;
+  adcRoleView = "all";
   document.querySelectorAll(".f-btn").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
   render(false);
@@ -289,9 +292,233 @@ function buildPanels(emp, cli) {
   row.appendChild(buildPanel("cli", "🤝 Client", cli, "col-gold"));
   frag.appendChild(row);
   const ovrWrap = document.createElement("div"); ovrWrap.className = "panels-overall";
-  ovrWrap.appendChild(buildPanel("ovr", "📊 Overall", [...emp, ...cli], ""));
+  ovrWrap.appendChild(buildAllDeptsPanel());
   frag.appendChild(ovrWrap);
   return frag;
+}
+
+// Score filter colours
+const FC_HEX = ["#8b0000", "#c0430f", "#e07020", "#c9a800", "#a8b800", "#6e9e00", "#4a7c00", "#2d6e2d", "#1a5c1a", "#253900"];
+
+const ADC_PAGE_SIZE = 7;
+let adcScoreFilter = null;  // null = show all, 1-10 = filter to that score
+let adcPage = 0;     // current page index (0-based)
+let adcRoleView = "all"; // "all" | "emp" | "cli"
+
+function buildAllDeptsPanel() {
+  const inWindow = filterByPeriod(allReports);
+
+  // Per-dept stats
+  const deptStats = DEPTS.map(d => {
+    const all = inWindow.filter(r => String(r.branch_name || "").toLowerCase() === d.id.toLowerCase());
+    const emp = all.filter(r => String(r.role || "").toLowerCase().includes(ROLE_EMP_KEYWORD));
+    const cli = all.filter(r => String(r.role || "").toLowerCase().includes(ROLE_CLI_KEYWORD));
+
+    const freqAll = Array(10).fill(0); all.forEach(r => { const v = Number(r.rating); if (v >= 1 && v <= 10) freqAll[v - 1]++; });
+    const freqEmp = Array(10).fill(0); emp.forEach(r => { const v = Number(r.rating); if (v >= 1 && v <= 10) freqEmp[v - 1]++; });
+    const freqCli = Array(10).fill(0); cli.forEach(r => { const v = Number(r.rating); if (v >= 1 && v <= 10) freqCli[v - 1]++; });
+
+    const avgOf = rows => rows.length ? rows.reduce((s, r) => s + Number(r.rating), 0) / rows.length : null;
+    return {
+      id: d.id, label: d.label,
+      avg: avgOf(all), avgEmp: avgOf(emp), avgCli: avgOf(cli),
+      total: all.length, totalEmp: emp.length, totalCli: cli.length,
+      freqAll, freqEmp, freqCli
+    };
+  });
+
+  // Choose which freq/avg/total fields to use based on role view
+  const freqKey = adcRoleView === "emp" ? "freqEmp" : adcRoleView === "cli" ? "freqCli" : "freqAll";
+  const avgKey = adcRoleView === "emp" ? "avgEmp" : adcRoleView === "cli" ? "avgCli" : "avg";
+  const totalKey = adcRoleView === "emp" ? "totalEmp" : adcRoleView === "cli" ? "totalCli" : "total";
+
+  // Build list of depts to show (filtered if score selected)
+  let visibleDepts;
+  if (adcScoreFilter !== null) {
+    const si = adcScoreFilter - 1;
+    visibleDepts = deptStats.filter(d => d[freqKey][si] > 0);
+  } else {
+    visibleDepts = deptStats.slice();
+  }
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(visibleDepts.length / ADC_PAGE_SIZE));
+  const safePage = Math.min(adcPage, totalPages - 1);
+  if (safePage !== adcPage) adcPage = safePage;
+  const pageDepts = visibleDepts.slice(adcPage * ADC_PAGE_SIZE, (adcPage + 1) * ADC_PAGE_SIZE);
+
+  // ── Build panel HTML ──────────────────────────────────────────────────────
+  const panel = document.createElement("div");
+  panel.className = "panel ovr fade-in all-depts-panel";
+
+  // Score buttons
+  const btnHTML = Array.from({ length: 10 }, (_, i) => {
+    const score = i + 1;
+    return `<button class="adc-score-btn${adcScoreFilter === score ? " active" : ""}"
+      data-score="${score}" style="--btn-color:${FC_HEX[i]}" title="${score}/10 ${EMOJIS[i]}">
+      ${EMOJIS[i]} <span>${score}</span></button>`;
+  }).join("");
+
+  // Role switch
+  const roleViews = [
+    { key: "all", label: "Combined", icon: "📊" },
+    { key: "emp", label: "Employee", icon: "👤" },
+    { key: "cli", label: "Client", icon: "🤝" },
+  ];
+  const roleHTML = roleViews.map(v =>
+    `<button class="adc-role-btn${adcRoleView === v.key ? " active" : ""}" data-role="${v.key}">
+      ${v.icon} ${v.label}</button>`
+  ).join("");
+
+  // Pagination controls
+  const pageHTML = `
+    <div class="adc-pagination">
+      <button class="adc-page-btn" id="adc-prev" ${adcPage === 0 ? "disabled" : ""}>&#8592;</button>
+      <span class="adc-page-info" id="adc-page-info">
+        ${adcPage + 1} / ${totalPages}
+        <span class="adc-page-sub">(${visibleDepts.length} dept${visibleDepts.length !== 1 ? "s" : ""})</span>
+      </span>
+      <button class="adc-page-btn" id="adc-next" ${adcPage >= totalPages - 1 ? "disabled" : ""}>&#8594;</button>
+    </div>`;
+
+  panel.innerHTML = `
+    <div class="panel-head">
+      <div class="panel-label">
+        <span class="label-dot dot-ovr"></span>
+        <span class="panel-label-text">🏥 All Departments — Overall</span>
+      </div>
+      <div class="adc-role-switch">${roleHTML}</div>
+    </div>
+    <div class="adc-score-bar">
+      <span class="adc-score-label">Filter by rating:</span>
+      ${btnHTML}
+      <button class="adc-score-btn adc-clear${adcScoreFilter === null ? " active" : ""}" data-score="all" style="--btn-color:#253900">All</button>
+    </div>
+    <div class="adc-toolbar">
+      <div class="adc-active-label" id="adc-active-label"></div>
+      ${pageHTML}
+    </div>
+    <div class="all-depts-chart" id="adc"></div>
+  `;
+
+  // ── Event listeners ───────────────────────────────────────────────────────
+  // Score filter
+  panel.querySelectorAll(".adc-score-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      adcScoreFilter = btn.dataset.score === "all" ? null : Number(btn.dataset.score);
+      adcPage = 0;
+      _rebuildPanel(panel);
+    });
+  });
+
+  // Role switch
+  panel.querySelectorAll(".adc-role-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      adcRoleView = btn.dataset.role;
+      adcPage = 0;
+      _rebuildPanel(panel);
+    });
+  });
+
+  // Pagination
+  panel.querySelector("#adc-prev")?.addEventListener("click", () => {
+    if (adcPage > 0) { adcPage--; _rebuildPanel(panel); }
+  });
+  panel.querySelector("#adc-next")?.addEventListener("click", () => {
+    if (adcPage < totalPages - 1) { adcPage++; _rebuildPanel(panel); }
+  });
+
+  // ── Chart area ────────────────────────────────────────────────────────────
+  const chart = panel.querySelector("#adc");
+  const activeLabel = panel.querySelector("#adc-active-label");
+
+  if (adcScoreFilter !== null) {
+    const si = adcScoreFilter - 1;
+    const maxCount = Math.max(...pageDepts.map(d => d[freqKey][si]), 1);
+
+    const roleLabel = adcRoleView === "emp" ? " · Employee" : adcRoleView === "cli" ? " · Client" : "";
+    activeLabel.innerHTML = `
+      <span class="adc-active-chip" style="--chip-color:${FC_HEX[si]}">
+        ${EMOJIS[si]} <strong>${adcScoreFilter}/10</strong>${roleLabel}
+        — ${visibleDepts.length} dept${visibleDepts.length !== 1 ? "s" : ""}
+      </span>`;
+
+    if (pageDepts.length === 0) {
+      chart.innerHTML = `<div class="chart-empty">
+        <span class="chart-empty-icon">${EMOJIS[si]}</span>
+        No departments submitted ${adcScoreFilter}/10 in this period
+      </div>`;
+    } else {
+      pageDepts.forEach(d => {
+        const count = d[freqKey][si];
+        const pct = Math.max((count / maxCount) * 100, 4);
+        const isDom = count === Math.max(...pageDepts.map(x => x[freqKey][si]));
+        const col = document.createElement("div"); col.className = "adc-col";
+        col.innerHTML = `
+          <div class="adc-bar-wrap">
+            <div class="adc-bar-track" style="height:${pct}%;background:rgba(155,236,0,0.05);">
+              <div class="adc-bar-fill ${FC[si]}${isDom ? " dom" : ""}" style="height:0%;" data-target="${pct}%"></div>
+              <div class="adc-tip"><strong>${d.id}</strong><br>${d.label}<br>
+                ${EMOJIS[si]} ${adcScoreFilter}/10 · <strong>${count}</strong> submission${count !== 1 ? "s" : ""}
+              </div>
+            </div>
+          </div>
+          <div class="adc-emoji">${EMOJIS[si]}</div>
+          <div class="adc-count" style="color:${FC_HEX[si]}">${count}×</div>
+          <div class="adc-label-full">${d.label}<span class="adc-id-tag">${d.id}</span></div>`;
+        chart.appendChild(col);
+      });
+    }
+  } else {
+    const maxAvg = Math.max(...visibleDepts.map(d => d[avgKey] || 0), 1);
+    const roleLabel = adcRoleView === "emp" ? "Employee avg" : adcRoleView === "cli" ? "Client avg" : "Overall avg";
+    activeLabel.innerHTML = `<span class="adc-active-chip adc-active-chip-neutral">${roleLabel} — all departments</span>`;
+
+    if (pageDepts.length === 0) {
+      chart.innerHTML = `<div class="chart-empty"><span class="chart-empty-icon">📭</span>No data for this period</div>`;
+    } else {
+      pageDepts.forEach(d => {
+        const avg = d[avgKey];
+        const total = d[totalKey];
+        const pct = avg !== null ? Math.max((avg / maxAvg) * 100, 4) : 0;
+        const avgLabel = avg !== null ? avg.toFixed(1) : "—";
+        const ci = avg !== null ? Math.max(0, Math.min(9, Math.round(avg) - 1)) : 4;
+        const emoji = avg !== null ? EMOJIS[ci] : "📭";
+        const isDom = avg !== null && avg === Math.max(...pageDepts.map(x => x[avgKey] || 0));
+        const col = document.createElement("div"); col.className = "adc-col";
+        col.innerHTML = `
+          <div class="adc-bar-wrap">
+            <div class="adc-bar-track" style="height:${pct}%;background:rgba(155,236,0,0.05);">
+              <div class="adc-bar-fill ${FC[ci]}${isDom ? " dom" : ""}" style="height:0%;" data-target="${pct}%"></div>
+              <div class="adc-tip"><strong>${d.id}</strong><br>${d.label}<br>
+                Avg: ${avgLabel} · ${total} submission${total !== 1 ? "s" : ""}
+              </div>
+            </div>
+          </div>
+          <div class="adc-emoji">${emoji}</div>
+          <div class="adc-count">${avgLabel}</div>
+          <div class="adc-label-full">${d.label}<span class="adc-id-tag">${d.id}</span></div>`;
+        chart.appendChild(col);
+      });
+    }
+  }
+
+  // Animate fills
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      panel.querySelectorAll(".adc-bar-fill").forEach(b => { b.style.height = b.dataset.target || "0%"; });
+    });
+  });
+
+  return panel;
+}
+
+// Re-render the panel in-place (keeps parent DOM intact)
+function _rebuildPanel(oldPanel) {
+  const parent = oldPanel.parentElement;
+  if (!parent) return;
+  parent.innerHTML = "";
+  parent.appendChild(buildAllDeptsPanel());
 }
 
 function buildPanel(type, label, rows, numColorClass) {
